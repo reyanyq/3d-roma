@@ -1,0 +1,49 @@
+{
+  "id": "forbidden-city",
+  "slug": "forbidden-city",
+  "name": "故宫",
+  "pageTitle": "故宫漫游 · 3D 旅行地图",
+  "description": "可旋转、缩放并点击景点飞行的故宫 3D 互动旅游地图。",
+  "brandTitle": "故宫漫游",
+  "brandEnglish": "FORBIDDEN CITY · BEIJING",
+  "locationLabel": "北京 · 东城",
+  "sidebar": {
+    "heading": "紫禁胜迹",
+    "caption": "一城宫阙，六百年紫禁",
+    "captionEnglish": "A JOURNEY THROUGH THE FORBIDDEN CITY",
+    "footer": "选一座宫殿，即刻启程",
+    "image": "public/images/forbidden-city/taihe.jpg",
+    "imageAlt": "故宫太和殿与汉白玉台基实景"
+  },
+  "kicker": {
+    "eyebrow": "FORBIDDEN CITY EXPLORER",
+    "title": "沿中轴线 · 穿越宫城"
+  },
+  "loadingText": "正在展开紫禁城宫阙…",
+  "transportName": "地铁站",
+  "projection": {"lng": 116.3909, "lat": 39.9163, "xFactor": 8540, "zFactor": 11120},
+  "terrain": {
+    "width": 280,
+    "depth": 250,
+    "step": 5,
+    "base": 1.6,
+    "shoreBlend": 9,
+    "hills": []
+  },
+  "home": {"target": [-1,0,-6], "offset": [92,142,178]},
+  "palette": {"roof": "#c59a3b", "wall": "#b9684b", "red": "#8f382d", "stone": "#d9cba8", "water": "#6e999a"},
+  "buildingStyle": {"wall": "#b9694c", "roof": "#c8a044", "forcePitched": true, "roofHeightM": 2.2},
+  "terrainPalette": {"base": "#d7cda9", "high": "#d7cda9", "urban": "#e4ddc7", "urbanGradient": false},
+  "lake": {"name": "紫 禁 城", "en": "FORBIDDEN CITY", "lng": 116.3909, "lat": 39.9162},
+  "boats": [],
+  "excludedBuildings": [],
+  "treeCount": 850,
+  "features": {"uniformTrees": true, "avoidBuildingTrees": true},
+  "data": {
+    "map": "map.json",
+    "places": "places.json",
+    "photos": "photos.json",
+    "transport": "transport.json",
+    "sources": "sources.html"
+  }
+}

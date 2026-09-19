@@ -84,7 +84,8 @@ function mappedBuildings(buildings){
   const polygon=b.p.slice(0,-1);if(polygon.length<3)continue;
   const x=polygon.reduce((n,p)=>n+p[0],0)/polygon.length,z=polygon.reduce((n,p)=>n+p[1],0)/polygon.length;
   const floor=Math.max(1.05,Math.min(...polygon.map(([px,pz])=>height(px,pz))));
-  const pitched=['gabled','hipped'].includes(b.roof)||(CONFIG.id==='summer-palace'&&z<-40&&x<55),roofH=pitched?Math.min(metres(2.4),b.h*.3):0;
+  const pitched=['gabled','hipped'].includes(b.roof)||(CONFIG.id==='summer-palace'&&z<-40&&x<55)||CONFIG.buildingStyle?.forcePitched,
+   roofH=pitched?Math.min(metres(CONFIG.buildingStyle?.roofHeightM||2.4),b.h*.3):0;
   const shape=new THREE.Shape(polygon.map(p=>new THREE.Vector2(p[0],-p[1])));
   let wall=new THREE.ExtrudeGeometry(shape,{depth:b.h-roofH,bevelEnabled:false,steps:1,curveSegments:1});wall.rotateX(-Math.PI/2);wall.translate(0,floor,0);if(wall.index)wall=wall.toNonIndexed();walls.push(wall);
   if(pitched){const vertices=[];
@@ -92,12 +93,12 @@ function mappedBuildings(buildings){
    const roof=new THREE.BufferGeometry();roof.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));roof.computeVertexNormals();roofs.push(roof);
   }
  }
- mergeBufferGeometry(walls,new THREE.MeshStandardMaterial({color:0xdedfd2,roughness:1}));
- mergeBufferGeometry(roofs,new THREE.MeshStandardMaterial({color:CONFIG.id==='summer-palace'?0x7d8974:0x566558,roughness:1,side:THREE.DoubleSide}));
+ mergeBufferGeometry(walls,new THREE.MeshStandardMaterial({color:CONFIG.buildingStyle?.wall||0xdedfd2,roughness:1}));
+ mergeBufferGeometry(roofs,new THREE.MeshStandardMaterial({color:CONFIG.buildingStyle?.roof||(CONFIG.id==='summer-palace'?0x7d8974:0x566558),roughness:1,side:THREE.DoubleSide}));
 }
 function createTerrain(){
- const geo=new THREE.PlaneGeometry(terrain.width,terrain.depth,gridX,gridZ);geo.rotateX(-Math.PI/2);const a=geo.attributes.position,col=[];const green=new THREE.Color(),base=new THREE.Color(0xabc38e),high=new THREE.Color(0x537d60),urban=new THREE.Color(0xe2e4d4);
- for(let i=0;i<a.count;i++){const x=a.getX(i),z=a.getZ(i),h=height(x,z);a.setY(i,h);const city=CONFIG.id==='westlake'?Math.min(1,Math.max(0,(x-95)/80)):Math.min(.85,Math.max(0,(x-55)/65));green.copy(base).lerp(high,Math.min(.85,(h-terrain.base)/(CONFIG.id==='westlake'?65:8))).lerp(urban,city);green.multiplyScalar(.97+rand()*.06);col.push(green.r,green.g,green.b);}
+ const geo=new THREE.PlaneGeometry(terrain.width,terrain.depth,gridX,gridZ);geo.rotateX(-Math.PI/2);const a=geo.attributes.position,col=[];const green=new THREE.Color(),base=new THREE.Color(CONFIG.terrainPalette?.base||0xabc38e),high=new THREE.Color(CONFIG.terrainPalette?.high||0x537d60),urban=new THREE.Color(CONFIG.terrainPalette?.urban||0xe2e4d4);
+ for(let i=0;i<a.count;i++){const x=a.getX(i),z=a.getZ(i),h=height(x,z);a.setY(i,h);const city=CONFIG.terrainPalette?.urbanGradient===false?0:CONFIG.id==='westlake'?Math.min(1,Math.max(0,(x-95)/80)):Math.min(.85,Math.max(0,(x-55)/65));green.copy(base).lerp(high,Math.min(.85,(h-terrain.base)/(CONFIG.id==='westlake'?65:8))).lerp(urban,city);green.multiplyScalar(.97+rand()*.06);col.push(green.r,green.g,green.b);}
  // Interpolate the same two triangles used by the 5-unit terrain grid.
  terrainSurfaceHeight=(x,z)=>{
   const gx=THREE.MathUtils.clamp((x+halfX)/terrain.step,0,gridX-.000001),gz=THREE.MathUtils.clamp((z+halfZ)/terrain.step,0,gridZ-.000001);
@@ -146,7 +147,7 @@ function createTerrain(){
  mappedBuildings(GEO.buildings);
  if(CONFIG.id==='summer-palace')createCoveredCorridors(GEO,terrainSurfaceHeight,materials,scene);
  const treePoints=[];
- for(let i=0;i<100000&&treePoints.length<CONFIG.treeCount;i++){const x=-halfX+5+rand()*(terrain.width-10),z=-halfZ+7+rand()*(terrain.depth-15);if(isWater(x,z))continue;if(x>(CONFIG.id==='westlake'?115:90)&&rand()>.09)continue;if(rawHeight(x,z)<(CONFIG.id==='westlake'?7:3)&&rand()>.38)continue;if(CONFIG.id==='summer-palace'&&buildingBounds.some(b=>x>=b.minX&&x<=b.maxX&&z>=b.minZ&&z<=b.maxZ&&within(x,z,b.p)))continue;const h=height(x,z);treePoints.push({x,z,h,s:.32+rand()*.4});}
+ for(let i=0;i<100000&&treePoints.length<CONFIG.treeCount;i++){const x=-halfX+5+rand()*(terrain.width-10),z=-halfZ+7+rand()*(terrain.depth-15);if(isWater(x,z))continue;if(!CONFIG.features?.uniformTrees&&x>(CONFIG.id==='westlake'?115:90)&&rand()>.09)continue;if(!CONFIG.features?.uniformTrees&&rawHeight(x,z)<(CONFIG.id==='westlake'?7:3)&&rand()>.38)continue;if((CONFIG.id==='summer-palace'||CONFIG.features?.avoidBuildingTrees)&&buildingBounds.some(b=>x>=b.minX&&x<=b.maxX&&z>=b.minZ&&z<=b.maxZ&&within(x,z,b.p)))continue;const h=height(x,z);treePoints.push({x,z,h,s:.32+rand()*.4});}
  const trees=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),new THREE.MeshStandardMaterial({roughness:1,flatShading:true}),treePoints.length);const dummy=new THREE.Object3D();
  treePoints.forEach((p,i)=>{dummy.position.set(p.x,p.h+p.s*1.1,p.z);dummy.scale.set(p.s,p.s*(1.1+rand()*.65),p.s);dummy.rotation.y=rand()*6.28;dummy.updateMatrix();trees.setMatrixAt(i,dummy.matrix);trees.setColorAt(i,new THREE.Color().setHSL(.28+rand()*.06,.19+rand()*.14,.31+rand()*.14));});trees.castShadow=true;trees.receiveShadow=true;scene.add(trees);
  // Quiet glints and a few small boats make the water readable from a distance.

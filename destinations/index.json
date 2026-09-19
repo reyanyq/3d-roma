@@ -12,5 +12,12 @@
     "name": "颐和园",
     "region": "海淀",
     "config": "summer-palace/config.json"
+  },
+  {
+    "id": "forbidden-city",
+    "city": "北京",
+    "name": "故宫",
+    "region": "东城",
+    "config": "forbidden-city/config.json"
   }
 ]
