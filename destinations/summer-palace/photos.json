@@ -1,0 +1,66 @@
+{
+  "foxiang": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Summer_Palace_in_Beijing2022_Spring.jpg",
+    "author": "Charlie fong",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "从昆明湖对岸眺望万寿山与佛香阁，湖面和山上建筑群同框",
+    "src": "public/images/summer-palace/foxiang.jpg"
+  },
+  "bridge17": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Seventeen_Arch_Bridge_(20201221160537).jpg",
+    "author": "N509FZ",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "十七孔桥横跨冬季昆明湖的全桥实景，远处可见万寿山佛香阁",
+    "src": "public/images/summer-palace/bridge17.jpg"
+  },
+  "corridor": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Long_Gallery,_Summer_Palace_at_Beijing.jpg",
+    "author": "Kallgan",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "alt": "颐和园长廊内部，彩绘横梁、红绿立柱与延伸的步道",
+    "src": "public/images/summer-palace/corridor.jpg"
+  },
+  "marbleboat": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Marbleboot.jpg",
+    "author": "Rolf Müller (User:Rolfmueller)",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "alt": "昆明湖岸的石舫全景，清晰可见石质船身和双层楼阁",
+    "src": "public/images/summer-palace/marbleboat.jpg"
+  },
+  "suzhou": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Suzhou_Street_in_the_Summer_Palace_(20240706121715).jpg",
+    "author": "HoweyYuan",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "颐和园苏州街的水道、临水店铺与三孔石桥",
+    "src": "public/images/summer-palace/suzhou.jpg"
+  },
+  "xiequ": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gardenofharmonious.jpg",
+    "author": "dbaron",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "alt": "谐趣园内临水亭廊、柳树与池中倒影",
+    "src": "public/images/summer-palace/xiequ.jpg"
+  },
+  "renshou": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E5%8C%97%E4%BA%AC%E9%A2%90%E5%92%8C%E5%9B%AD%E4%BB%81%E5%AF%BF%E6%AE%BF2023.6_(2).jpg",
+    "author": "ScareCriterion12",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "颐和园仁寿殿正面全景，殿前石台及铜炉",
+    "src": "public/images/summer-palace/renshou.jpg"
+  },
+  "dehe": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E5%8C%97%E4%BA%AC%E9%A2%90%E5%92%8C%E5%9B%AD%E5%BE%B7%E5%92%8C%E5%9B%AD%E5%A4%A7%E6%88%8F%E6%A5%BC2023.6_(2).jpg",
+    "author": "ScareCriterion12",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "德和园大戏楼的三层戏台、彩绘檐梁与院落",
+    "src": "public/images/summer-palace/dehe.jpg"
+  }
+}

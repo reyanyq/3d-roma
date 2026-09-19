@@ -1,0 +1,47 @@
+{
+  "id": "summer-palace",
+  "slug": "summer-palace",
+  "name": "颐和园",
+  "pageTitle": "颐和园漫游 · 3D 旅行地图",
+  "description": "可旋转、缩放并点击景点飞行的颐和园 3D 互动旅游地图。",
+  "brandTitle": "颐和园漫游",
+  "brandEnglish": "SUMMER PALACE · BEIJING",
+  "locationLabel": "北京 · 海淀",
+  "sidebar": {
+    "heading": "颐和胜境",
+    "caption": "一园湖山，百年风华",
+    "captionEnglish": "A JOURNEY THROUGH SUMMER PALACE",
+    "footer": "选一处风景，即刻启程",
+    "image": "public/images/summer-palace/foxiang.jpg",
+    "imageAlt": "颐和园昆明湖与万寿山佛香阁实景"
+  },
+  "kicker": {
+    "eyebrow": "SUMMER PALACE EXPLORER",
+    "title": "昆明湖畔 · 皇家园林"
+  },
+  "loadingText": "正在铺开湖山园林…",
+  "transportName": "轨道交通",
+  "projection": {"lng": 116.275, "lat": 39.991, "xFactor": 8540, "zFactor": 11120},
+  "terrain": {
+    "width": 440,
+    "depth": 450,
+    "step": 5,
+    "base": 1.6,
+    "shoreBlend": 12,
+    "hills": [[-60,-86,5.859,40,18]]
+  },
+  "home": {"target": [-38,0,-12], "offset": [190,310,390]},
+  "palette": {"roof": "#b39449", "wall": "#c19c79", "red": "#93604d", "stone": "#d9d2bc", "water": "#73a5a7"},
+  "lake": {"name": "昆 明 湖", "en": "KUNMING LAKE", "lng": 116.2678, "lat": 39.9923},
+  "boats": [[116.269,39.993],[116.266,39.9915],[116.2667,39.9899]],
+  "excludedBuildings": ["43977851"],
+  "treeCount": 11500,
+  "data": {
+    "map": "map.json",
+    "places": "places.json",
+    "photos": "photos.json",
+    "transport": "transport.json",
+    "sources": "sources.html",
+    "landTriangles": "land-triangles.json"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "id": "westlake",
+  "slug": "west-lake",
+  "name": "西湖",
+  "pageTitle": "西湖漫游 · 3D 旅行地图",
+  "brandTitle": "西湖漫游",
+  "brandEnglish": "WEST LAKE · HANGZHOU",
+  "locationLabel": "杭州 · 浙江",
+  "sidebar": {
+    "heading": "湖山胜迹",
+    "caption": "一湖山水，千年风雅",
+    "captionEnglish": "A JOURNEY THROUGH WEST LAKE",
+    "footer": "选一处风景，即刻启程",
+    "image": "public/images/west-lake/overview.jpg",
+    "imageAlt": "西湖日落与杭州湖滨航拍"
+  },
+  "kicker": {
+    "eyebrow": "WEST LAKE EXPLORER",
+    "title": "湖山之间 · 自在漫游"
+  },
+  "loadingText": "正在铺开一湖山水…",
+  "transportName": "地铁站",
+  "projection": {"lng": 120.14, "lat": 30.248, "xFactor": 9620, "zFactor": 11120},
+  "terrain": {
+    "width": 580,
+    "depth": 570,
+    "step": 5,
+    "base": 1.6,
+    "shoreBlend": 32,
+    "hills": [[-228,30,54,90,112],[-250,-132,67,80,70],[-104,-217,38,73,52],[15,225,45,90,58],[-150,212,60,105,66],[55,159,14,22,24]]
+  },
+  "home": {"target": [0,0,0], "offset": [285,440,535]},
+  "palette": {"roof": "#405b50", "wall": "#e9dac1", "red": "#ac7050", "stone": "#d8d7bc", "water": "#6daaa4"},
+  "lake": {"name": "西 湖", "en": "WEST LAKE", "lng": 120.144, "lat": 30.249},
+  "boats": [[120.145,30.25],[120.137,30.245],[120.144,30.244],[120.143,30.256]],
+  "excludedBuildings": ["229726934"],
+  "treeCount": 22000,
+  "features": {
+    "stoneTowers": [[120.1416,30.2376],[120.1423,30.2381],[120.1415,30.2384]]
+  },
+  "data": {
+    "map": "map.json",
+    "places": "places.json",
+    "photos": "photos.json",
+    "transport": "transport.json",
+    "sources": "sources.html"
+  }
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "west-lake",
+    "city": "杭州",
+    "name": "西湖",
+    "region": "浙江",
+    "config": "west-lake/config.json"
+  },
+  {
+    "id": "summer-palace",
+    "city": "北京",
+    "name": "颐和园",
+    "region": "海淀",
+    "config": "summer-palace/config.json"
+  }
+]

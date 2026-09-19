@@ -1,0 +1,82 @@
+{
+  "broken": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Broken_Bridge_(Hangzhou)_20250505.jpg",
+    "author": "Suicasmo",
+    "license": "CC0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "alt": "杭州西湖断桥的石拱桥身、桥栏与湖面实景",
+    "src": "public/images/west-lake/broken.jpg"
+  },
+  "moon": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E8%A5%BF%E6%B9%96%E5%B9%B3%E6%B9%96%E7%A7%8B%E6%9C%88.JPG",
+    "author": "Jeff chenqinyi",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "alt": "平湖秋月临湖亭台、石灯与晨曦中的西湖水面",
+    "src": "public/images/west-lake/moon.jpg"
+  },
+  "su": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Su_Causeway_near_West_Lake,_looking_towards_north_20120529_1.jpg",
+    "author": "DXR",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "西湖苏堤的柳树长廊及两侧湖面",
+    "src": "public/images/west-lake/su.jpg"
+  },
+  "pools": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Three_Pools_Mirroring_the_Moon_01_2020-04.jpg",
+    "author": "猫猫的日记本",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "从小瀛洲我心相印亭方向眺望三潭印月三座石塔",
+    "src": "public/images/west-lake/pools.jpg"
+  },
+  "leifeng": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Leifeng_Pagoda_DJI_0593_(2).jpg",
+    "author": "David290",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "雷峰塔完整塔身的航拍实景，背景为西湖湖面与杭州城区",
+    "src": "public/images/west-lake/leifeng.jpg"
+  },
+  "fish": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E8%8A%B1%E6%B8%AF%E8%A7%82%E9%B1%BC.jpg",
+    "author": "钉钉",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "杭州西湖花港观鱼御碑亭与池塘",
+    "src": "public/images/west-lake/fish.jpg"
+  },
+  "lotus": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lotus_in_the_Breeze_at_the_Winding_Courtyard_3.jpg",
+    "author": "钉钉",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "杭州西湖曲院风荷的荷塘、曲折步道与临水建筑",
+    "src": "public/images/west-lake/lotus.jpg"
+  },
+  "willow": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Orioles_Singing_in_the_Willows.jpg",
+    "author": "NocturneNoir",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "alt": "杭州西湖柳浪闻莺的垂柳与闻莺馆茶楼",
+    "src": "public/images/west-lake/willow.jpg"
+  },
+  "yue": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Yu_Fei_Temple.jpg",
+    "author": "Takashishin",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "alt": "杭州岳王庙山门及岳王庙匾额",
+    "src": "public/images/west-lake/yue.jpg"
+  },
+  "jingci": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E5%87%80%E6%85%88%E5%AF%BA.jpg",
+    "author": "Tyg728",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "杭州南屏山下净慈寺建筑群全景",
+    "src": "public/images/west-lake/jingci.jpg"
+  }
+}
