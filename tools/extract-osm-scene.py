@@ -21,7 +21,8 @@ parser.add_argument("--building-depth", type=float)
 args = parser.parse_args()
 
 root = ET.parse(args.source).getroot()
-nodes = {e.get("id"): (float(e.get("lon")), float(e.get("lat"))) for e in root if e.tag == "node"}
+node_elements = {e.get("id"): e for e in root if e.tag == "node"}
+nodes = {node_id: (float(e.get("lon")), float(e.get("lat"))) for node_id, e in node_elements.items()}
 ways = {e.get("id"): e for e in root if e.tag == "way"}
 
 def tags(element):
@@ -81,7 +82,17 @@ def clip_path(points):
     return result
 
 road_types = {"motorway", "trunk", "primary", "secondary", "tertiary", "residential", "pedestrian", "footway", "path", "service", "unclassified", "living_street", "steps", "cycleway"}
-roads, buildings, water, named = [], [], {"outer": [], "inner": []}, {}
+roads, buildings, walls, water, named = [], [], [], {"outer": [], "inner": []}, {}
+
+for node_id, (lng, lat) in nodes.items():
+    node = node_elements.get(node_id)
+    if node is None:
+        continue
+    data = tags(node)
+    if data.get("name"):
+        point = project((lng, lat))
+        if abs(point[0]) <= half_x and abs(point[1]) <= half_z:
+            named[data["name"]] = {"type": "node", "id": node_id, "lng": lng, "lat": lat, "point": rounded(point)}
 
 for way_id, way in ways.items():
     data = tags(way)
@@ -95,6 +106,9 @@ for way_id, way in ways.items():
     if data.get("highway") in road_types:
         for part in clip_path(points):
             roads.append({"id": way_id, "p": [rounded(point) for point in part], "type": data["highway"], "name": data.get("name", ""), "bridge": data.get("bridge") in {"yes", "viaduct"}})
+    if data.get("barrier") == "city_wall" or data.get("historic") == "citywalls":
+        for part in clip_path(points):
+            walls.append({"id": way_id, "p": [rounded(point) for point in part], "name": data.get("name", ""), "material": data.get("material", "stone")})
     if data.get("natural") == "water" and node_ids[0] == node_ids[-1]:
         center_x = sum(point[0] for point in points) / len(points)
         center_z = sum(point[1] for point in points) / len(points)
@@ -119,10 +133,11 @@ scene = {
     "water": water,
     "roads": roads,
     "buildings": buildings,
+    "walls": walls,
     "source": "© OpenStreetMap contributors, ODbL 1.0",
     "retrieved": "2026-09-20",
 }
 Path(args.output).write_text(json.dumps(scene, ensure_ascii=False, separators=(",", ":")))
 if args.features_out:
     Path(args.features_out).write_text(json.dumps(named, ensure_ascii=False, indent=2))
-print(json.dumps({"water": len(water["outer"]), "roads": len(roads), "buildings": len(buildings), "named": len(named)}, ensure_ascii=False))
+print(json.dumps({"water": len(water["outer"]), "roads": len(roads), "buildings": len(buildings), "walls": len(walls), "named": len(named)}, ensure_ascii=False))

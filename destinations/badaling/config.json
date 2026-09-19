@@ -1,0 +1,50 @@
+{
+  "id": "badaling",
+  "slug": "badaling",
+  "name": "八达岭长城",
+  "pageTitle": "八达岭长城漫游 · 3D 旅行地图",
+  "description": "可旋转、缩放并点击敌楼飞行的八达岭长城 3D 互动旅游地图。",
+  "brandTitle": "八达岭漫游",
+  "brandEnglish": "BADALING · BEIJING",
+  "locationLabel": "北京 · 延庆",
+  "sidebar": {
+    "heading": "长城雄关",
+    "caption": "山脊起伏，关城蜿蜒",
+    "captionEnglish": "A JOURNEY ALONG THE GREAT WALL",
+    "footer": "选一座敌楼，即刻启程",
+    "image": "public/images/badaling/wangjing.jpg",
+    "imageAlt": "八达岭长城沿山脊蜿蜒的实景"
+  },
+  "kicker": {
+    "eyebrow": "BADALING EXPLORER",
+    "title": "南北两线 · 登临雄关"
+  },
+  "loadingText": "正在铺开山脊长城…",
+  "transportName": "公共交通",
+  "projection": {"lng": 116.0095, "lat": 40.3553, "xFactor": 8510, "zFactor": 11120},
+  "terrain": {
+    "width": 260,
+    "depth": 230,
+    "step": 5,
+    "base": 1.6,
+    "shoreBlend": 9,
+    "hills": [[-55,65,15,50,55],[52,-65,18,50,60],[18,-12,10,55,65],[-25,12,5,70,70],[100,60,14,50,50]]
+  },
+  "home": {"target": [0,6,0], "offset": [125,165,215]},
+  "palette": {"roof": "#5f6258", "wall": "#91897a", "red": "#8f493c", "stone": "#aaa392", "water": "#789a99"},
+  "buildingStyle": {"wall": "#898375", "roof": "#69685e", "forcePitched": false},
+  "wallStyle": {"widthM": 8, "heightM": 8, "parapetHeightM": 1.5, "color": "#b2a486", "parapetColor": "#7c7467", "walkwayColor": "#d2c39d"},
+  "terrainPalette": {"base": "#91a274", "high": "#536746", "urban": "#b7b097", "urbanGradient": false},
+  "lake": {"name": "八 达 岭", "en": "BADALING GREAT WALL", "lng": 116.0095, "lat": 40.3553},
+  "boats": [],
+  "excludedBuildings": [],
+  "treeCount": 4200,
+  "features": {"uniformTrees": true, "avoidBuildingTrees": true, "avoidWallTrees": true, "hideMinorPaths": true},
+  "data": {
+    "map": "map.json",
+    "places": "places.json",
+    "photos": "photos.json",
+    "transport": "transport.json",
+    "sources": "sources.html"
+  }
+}

@@ -19,5 +19,12 @@
     "name": "故宫",
     "region": "东城",
     "config": "forbidden-city/config.json"
+  },
+  {
+    "id": "badaling",
+    "city": "北京",
+    "name": "八达岭长城",
+    "region": "延庆",
+    "config": "badaling/config.json"
   }
 ]

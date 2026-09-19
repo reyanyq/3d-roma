@@ -34,6 +34,9 @@ const outer=GEO.water.outer, inner=GEO.water.inner;
 const waterShapes=outer.map(p=>({p,minX:Math.min(...p.map(a=>a[0])),maxX:Math.max(...p.map(a=>a[0])),minZ:Math.min(...p.map(a=>a[1])),maxZ:Math.max(...p.map(a=>a[1])),holes:inner.filter(h=>within(h[0][0],h[0][1],p))}));
 function isWater(x,z){return waterShapes.some(s=>x>=s.minX&&x<=s.maxX&&z>=s.minZ&&z<=s.maxZ&&within(x,z,s.p)&&!s.holes.some(h=>within(x,z,h)));}
 const buildingBounds=GEO.buildings.map(b=>({p:b.p,minX:Math.min(...b.p.map(a=>a[0])),maxX:Math.max(...b.p.map(a=>a[0])),minZ:Math.min(...b.p.map(a=>a[1])),maxZ:Math.max(...b.p.map(a=>a[1]))}));
+const wallSegments=(GEO.walls||[]).flatMap(wall=>wall.p.slice(1).map((point,index)=>[wall.p[index],point]));
+function distanceToSegment(x,z,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],length=dx*dx+dz*dz;if(!length)return Math.hypot(x-a[0],z-a[1]);const t=THREE.MathUtils.clamp(((x-a[0])*dx+(z-a[1])*dz)/length,0,1);return Math.hypot(x-a[0]-t*dx,z-a[1]-t*dz);}
+const nearWall=(x,z,distance=1.5)=>wallSegments.some(([a,b])=>distanceToSegment(x,z,a,b)<distance);
 const borders=outer.concat(inner).flatMap(p=>p.filter((_,i)=>i%3===0));
 function rawHeight(x,z){let h=terrain.base;const hills=terrain.hills;for(const [a,b,c,wx,wz]of hills)h+=c*Math.exp(-(((x-a)/wx)**2)-((z-b)/wz)**2);return h;}
 function height(x,z){if(isWater(x,z))return .3;let h=rawHeight(x,z);if(h<3)return h;let d=Infinity;for(const p of borders){const ds=(x-p[0])**2+(z-p[1])**2;if(ds<d)d=ds;}return terrain.base+(h-terrain.base)*Math.min(1,Math.sqrt(d)/terrain.shoreBlend);}
@@ -56,6 +59,24 @@ function pathMesh(points,width,color,yOffset=.08){
  }
  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.computeVertexNormals();
  const mesh=makeMesh(geometry,new THREE.MeshStandardMaterial({color,roughness:1,side:THREE.DoubleSide}));mesh.castShadow=false;
+}
+function wallMesh(points,width,wallHeight,color,baseOffset=0){
+ if(points.length<2)return;const vertices=[];
+ for(let i=1;i<points.length;i++){
+  const a=points[i-1],b=points[i],dx=b[0]-a[0],dz=b[1]-a[1],length=Math.hypot(dx,dz);if(length<.001)continue;
+  const nx=-dz/length*width/2,nz=dx/length*width/2,ha=terrainSurfaceHeight(...a)+baseOffset,hb=terrainSurfaceHeight(...b)+baseOffset;
+  const corners=[[a[0]+nx,ha,a[1]+nz],[a[0]-nx,ha,a[1]-nz],[b[0]+nx,hb,b[1]+nz],[b[0]-nx,hb,b[1]-nz],[a[0]+nx,ha+wallHeight,a[1]+nz],[a[0]-nx,ha+wallHeight,a[1]-nz],[b[0]+nx,hb+wallHeight,b[1]+nz],[b[0]-nx,hb+wallHeight,b[1]-nz]];
+  for(const index of [4,5,6,6,5,7,0,4,2,2,4,6,1,3,5,3,7,5,0,1,4,4,1,5,2,6,3,3,6,7])vertices.push(...corners[index]);
+ }
+ const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.computeVertexNormals();
+ makeMesh(geometry,new THREE.MeshStandardMaterial({color,roughness:1,flatShading:true}));
+}
+function offsetPath(points,offset){
+ return points.map((point,index)=>{const before=points[Math.max(0,index-1)],after=points[Math.min(points.length-1,index+1)],dx=after[0]-before[0],dz=after[1]-before[1],length=Math.hypot(dx,dz)||1;return [point[0]-dz/length*offset,point[1]+dx/length*offset];});
+}
+function createMappedWalls(walls=[]){
+ const style=CONFIG.wallStyle||{},width=metres(style.widthM||6.5),wallHeight=metres(style.heightM||7.2),parapetHeight=metres(style.parapetHeightM||1.4),color=style.color||0x8a8374,parapet=style.parapetColor||0x777164,walkway=style.walkwayColor||0xc4b896;
+ for(const wall of walls){wallMesh(wall.p,width,wallHeight,color,.02);pathMesh(wall.p,width*.72,walkway,wallHeight+.04);wallMesh(offsetPath(wall.p,width*.42),width*.13,parapetHeight,parapet,wallHeight);wallMesh(offsetPath(wall.p,-width*.42),width*.13,parapetHeight,parapet,wallHeight);}
 }
 function landmark(loc){
  const p=pos(loc.lng,loc.lat),ground=(CONFIG.id==='summer-palace'&&['bridge17','marbleboat'].includes(loc.id))?1.06:loc.kind==='bridge'?Math.max(1.6,height(p.x,p.z)):height(p.x,p.z);
@@ -140,14 +161,15 @@ function createTerrain(){
  const edgePos=[];outer.concat(inner).forEach(poly=>{for(let i=1;i<poly.length;i++){edgePos.push(poly[i-1][0],1.28,poly[i-1][1],poly[i][0],1.28,poly[i][1]);}});
  const eg=new THREE.BufferGeometry();eg.setAttribute('position',new THREE.Float32BufferAttribute(edgePos,3));scene.add(new THREE.LineSegments(eg,new THREE.LineBasicMaterial({color:0xd3dcc0,transparent:true,opacity:.78})));
  const roadPos=[],walkingPos=[];
- for(const road of GEO.roads){const arr=['footway','path','service'].includes(road.type)?walkingPos:roadPos;for(let i=1;i<road.p.length;i++){const [x,z]=road.p[i-1],[u,w]=road.p[i];arr.push(x,height(x,z)+.36,z,u,height(u,w)+.36,w);}}
+ for(const road of GEO.roads){if(CONFIG.features?.hideMinorPaths&&['footway','path','service','steps','cycleway'].includes(road.type))continue;const arr=['footway','path','service'].includes(road.type)?walkingPos:roadPos;for(let i=1;i<road.p.length;i++){const [x,z]=road.p[i-1],[u,w]=road.p[i];arr.push(x,height(x,z)+.36,z,u,height(u,w)+.36,w);}}
  for(const [arr,c,o]of [[roadPos,0xf6f0df,.85],[walkingPos,0xe8e5c8,.48]]){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(arr,3));scene.add(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:c,transparent:true,opacity:o})));}
  // Emphasize the two lake causeways while preserving their mapped alignment.
  for(const road of GEO.roads.filter(r=>(['苏堤','白堤','西堤','长廊'].includes(r.name)||r.bridge)&&!(CONFIG.id==='summer-palace'&&r.name==='十七孔桥')))pathMesh(road.p,road.name==='长廊'?.25:road.name==='苏堤'?.9:road.name==='白堤'||road.name==='断桥'?.86:.55,0xded5b4);
+ createMappedWalls(GEO.walls);
  mappedBuildings(GEO.buildings);
  if(CONFIG.id==='summer-palace')createCoveredCorridors(GEO,terrainSurfaceHeight,materials,scene);
  const treePoints=[];
- for(let i=0;i<100000&&treePoints.length<CONFIG.treeCount;i++){const x=-halfX+5+rand()*(terrain.width-10),z=-halfZ+7+rand()*(terrain.depth-15);if(isWater(x,z))continue;if(!CONFIG.features?.uniformTrees&&x>(CONFIG.id==='westlake'?115:90)&&rand()>.09)continue;if(!CONFIG.features?.uniformTrees&&rawHeight(x,z)<(CONFIG.id==='westlake'?7:3)&&rand()>.38)continue;if((CONFIG.id==='summer-palace'||CONFIG.features?.avoidBuildingTrees)&&buildingBounds.some(b=>x>=b.minX&&x<=b.maxX&&z>=b.minZ&&z<=b.maxZ&&within(x,z,b.p)))continue;const h=height(x,z);treePoints.push({x,z,h,s:.32+rand()*.4});}
+ for(let i=0;i<100000&&treePoints.length<CONFIG.treeCount;i++){const x=-halfX+5+rand()*(terrain.width-10),z=-halfZ+7+rand()*(terrain.depth-15);if(isWater(x,z))continue;if(!CONFIG.features?.uniformTrees&&x>(CONFIG.id==='westlake'?115:90)&&rand()>.09)continue;if(!CONFIG.features?.uniformTrees&&rawHeight(x,z)<(CONFIG.id==='westlake'?7:3)&&rand()>.38)continue;if((CONFIG.id==='summer-palace'||CONFIG.features?.avoidBuildingTrees)&&buildingBounds.some(b=>x>=b.minX&&x<=b.maxX&&z>=b.minZ&&z<=b.maxZ&&within(x,z,b.p)))continue;if(CONFIG.features?.avoidWallTrees&&nearWall(x,z,1.45))continue;const h=height(x,z);treePoints.push({x,z,h,s:.32+rand()*.4});}
  const trees=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),new THREE.MeshStandardMaterial({roughness:1,flatShading:true}),treePoints.length);const dummy=new THREE.Object3D();
  treePoints.forEach((p,i)=>{dummy.position.set(p.x,p.h+p.s*1.1,p.z);dummy.scale.set(p.s,p.s*(1.1+rand()*.65),p.s);dummy.rotation.y=rand()*6.28;dummy.updateMatrix();trees.setMatrixAt(i,dummy.matrix);trees.setColorAt(i,new THREE.Color().setHSL(.28+rand()*.06,.19+rand()*.14,.31+rand()*.14));});trees.castShadow=true;trees.receiveShadow=true;scene.add(trees);
  // Quiet glints and a few small boats make the water readable from a distance.
