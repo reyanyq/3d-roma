@@ -1,0 +1,14 @@
+{
+  "roads": [],
+  "stations": [
+    {
+      "id": "xiangshan",
+      "name": "香山",
+      "lng": 116.1978545,
+      "lat": 39.9925094,
+      "lines": ["西郊线"],
+      "osmUrl": "https://www.openstreetmap.org/way/874627989",
+      "sourceUrl": "https://www.bjsubway.com/station/xltcx/linecenter.html"
+    }
+  ]
+}

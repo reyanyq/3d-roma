@@ -40,5 +40,12 @@
     "name": "奥森南园",
     "region": "朝阳",
     "config": "olympic-forest-south/config.json"
+  },
+  {
+    "id": "xiangshan-park",
+    "city": "北京",
+    "name": "香山公园",
+    "region": "海淀",
+    "config": "xiangshan-park/config.json"
   }
 ]

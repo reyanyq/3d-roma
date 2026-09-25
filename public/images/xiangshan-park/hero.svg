@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" role="img" aria-labelledby="title desc">
+  <title id="title">香山秋季地图插画</title>
+  <desc id="desc">红叶山林、登山步道与远山层叠构成的香山秋景</desc>
+  <rect width="1000" height="480" fill="#d8d5bd"/>
+  <path d="M0 362L122 292L218 322L344 221L426 267L555 118L686 234L786 172L1000 304V480H0Z" fill="#78815b"/>
+  <path d="M0 403L146 335L252 364L371 278L468 323L578 205L704 292L828 236L1000 344V480H0Z" fill="#646f4f"/>
+  <path d="M536 126L555 118L584 150L558 145Z" fill="#e4dfc7" opacity=".85"/>
+  <path d="M54 480C182 423 280 425 382 366C482 309 557 267 671 254C794 240 868 288 1000 256" fill="none" stroke="#e8d8ad" stroke-width="10" opacity=".92"/>
+  <path d="M54 480C182 423 280 425 382 366C482 309 557 267 671 254C794 240 868 288 1000 256" fill="none" stroke="#b79661" stroke-width="2" opacity=".7"/>
+  <g fill="#c99732"><circle cx="115" cy="338" r="32"/><circle cx="280" cy="330" r="37"/><circle cx="700" cy="272" r="34"/><circle cx="906" cy="294" r="29"/></g>
+  <g fill="#a74331"><circle cx="188" cy="366" r="38"/><circle cx="354" cy="303" r="30"/><circle cx="760" cy="251" r="31"/><circle cx="954" cy="328" r="36"/></g>
+  <g fill="#7e332a"><circle cx="231" cy="301" r="23"/><circle cx="623" cy="264" r="29"/><circle cx="847" cy="280" r="26"/></g>
+  <g fill="#425e42"><circle cx="70" cy="388" r="27"/><circle cx="425" cy="318" r="32"/><circle cx="812" cy="314" r="30"/></g>
+  <path d="M556 111L567 134L548 134Z" fill="#8e4938"/>
+  <rect x="553" y="134" width="9" height="22" fill="#d2c3a5"/>
+</svg>

@@ -1,0 +1,53 @@
+{
+  "id": "xiangshan-park",
+  "slug": "xiangshan-park",
+  "name": "香山公园",
+  "pageTitle": "香山公园漫游 · 轻量化 3D 山地样片",
+  "description": "基于公开地图数据生成的香山公园轻量化 3D 互动样片，可旋转、缩放并点击景点飞行。",
+  "brandTitle": "香山公园漫游",
+  "brandEnglish": "FRAGRANT HILLS PARK · BEIJING",
+  "locationLabel": "北京 · 海淀",
+  "sidebar": {
+    "heading": "西山秋色",
+    "caption": "红叶入山，古园登高",
+    "captionEnglish": "AUTUMN TRAILS · FRAGRANT HILLS",
+    "footer": "选一处景点，即刻漫游",
+    "image": "public/images/xiangshan-park/hero.svg",
+    "imageAlt": "香山秋季山林与登山步道插画"
+  },
+  "kicker": {
+    "eyebrow": "FRAGRANT HILLS EXPLORER",
+    "title": "红叶 · 古迹 · 山巅"
+  },
+  "loadingText": "正在铺开香山山路与秋林…",
+  "transportName": "公共交通",
+  "projection": {"lng": 116.187, "lat": 39.994, "xFactor": 8540, "zFactor": 11120},
+  "terrain": {
+    "width": 360,
+    "depth": 360,
+    "step": 3,
+    "base": 1.8,
+    "shoreBlend": 5,
+    "hills": [[-124, 33, 36, 58, 78], [-88, 8, 25, 62, 104], [-48, 42, 14, 56, 92], [-38, -55, 12, 66, 64]]
+  },
+  "home": {"target": [-38, 9, 18], "offset": [190, 205, 270]},
+  "palette": {"roof": "#705c4d", "wall": "#d8ceb8", "red": "#9d4638", "stone": "#c6bca6", "water": "#6f9b99"},
+  "buildingStyle": {"wall": "#d7cfbb", "roof": "#6d594b", "forcePitched": true},
+  "terrainPalette": {"base": "#9faa72", "high": "#5c704b", "urban": "#d5d2bd", "urbanGradient": false},
+  "treePalette": {
+    "season": "peak-autumn",
+    "colors": ["#3f6547", "#596f42", "#7d783a", "#c6942e", "#d6a23a", "#c16432", "#a43e2f", "#7e3128"]
+  },
+  "lake": {"name": "香 山", "en": "FRAGRANT HILLS", "lng": 116.1834, "lat": 39.9904},
+  "boats": [],
+  "excludedBuildings": [],
+  "treeCount": 5200,
+  "features": {"uniformTrees": true, "avoidBuildingTrees": true, "sidebar": true, "hideRoadControl": true},
+  "data": {
+    "map": "map.json",
+    "places": "places.json",
+    "photos": "photos.json",
+    "transport": "transport.json",
+    "sources": "sources.html"
+  }
+}
