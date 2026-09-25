@@ -2,7 +2,17 @@
   "id": "summer-palace",
   "slug": "summer-palace",
   "name": "颐和园",
-  "journey": {"entryId":"renshou","entryName":"东宫门","lng":116.2775,"lat":39.9969,"arrivalRadiusMeters":120},
+  "journey": {
+    "arrivalRadiusMeters": 120,
+    "entries": [
+      {"id":"east-palace-gate","name":"东宫门","lng":116.2775,"lat":39.9969,"access":"地铁 4 / 16 号线西苑站","recommended":true},
+      {"id":"north-gate","name":"北宫门","lng":116.2679893,"lat":40.0010478,"access":"地铁 4 号线北宫门站"},
+      {"id":"new-palace-gate","name":"新建宫门","lng":116.2754707,"lat":39.9892355,"access":"公交直达 · 有停车场"},
+      {"id":"south-ruyi-gate","name":"南如意门","lng":116.2714877,"lat":39.9796021,"access":"公交直达 · 有停车场"},
+      {"id":"west-gate","name":"西门","lng":116.2582115,"lat":39.9859191,"access":"西郊线颐和园西门站"},
+      {"id":"north-ruyi-gate","name":"北如意门","lng":116.262789,"lat":40.0005398,"access":"步行入口 · 暂无公交停车"}
+    ]
+  },
   "pageTitle": "颐和园漫游 · 3D 旅行地图",
   "description": "可旋转、缩放并点击景点飞行的颐和园 3D 互动旅游地图。",
   "brandTitle": "颐和园漫游",

@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { loadDestination } from './destination-loader.js?v=20260925-journey1';
+import { loadDestination } from './destination-loader.js?v=20260925-entries1';
 import { createSummerLandmark, createCoveredCorridors } from './summer-models.js';
 let CONFIG;
 try{
@@ -14,13 +14,10 @@ try{
 const {geo:GEO,photos:PHOTOS,transport:TRANSPORT,locations,route:ROUTE}=CONFIG;
 const routeStart=ROUTE?.stops?.length?locations.find(location=>location.id===ROUTE.stops[0]):null;
 const journeyConfig=CONFIG.journey||{};
-const journeyLocation=locations.find(location=>location.id===journeyConfig.entryId)||routeStart;
-const journeyEntry=journeyLocation?{
- name:journeyConfig.entryName||journeyLocation.name,
- lng:journeyConfig.lng??journeyLocation.lng,
- lat:journeyConfig.lat??journeyLocation.lat,
- location:journeyLocation
-}:null;
+const fallbackJourneyLocation=locations.find(location=>location.id===journeyConfig.entryId)||routeStart;
+const configuredJourneyEntries=journeyConfig.entries?.length?journeyConfig.entries:[fallbackJourneyLocation?{id:journeyConfig.entryId||fallbackJourneyLocation.id,name:journeyConfig.entryName||fallbackJourneyLocation.name,lng:journeyConfig.lng??fallbackJourneyLocation.lng,lat:journeyConfig.lat??fallbackJourneyLocation.lat}:null].filter(Boolean);
+const journeyEntries=configuredJourneyEntries.map((entry,index)=>({...entry,id:entry.id||`entry-${index+1}`,location:locations.find(location=>location.id===(entry.locationId||entry.entryId))||(configuredJourneyEntries.length===1?fallbackJourneyLocation:null)}));
+let journeyEntry=journeyEntries.find(entry=>entry.recommended)||journeyEntries[0]||null;
 const terrain=CONFIG.terrain,halfX=terrain.width/2,halfZ=terrain.depth/2,gridX=terrain.width/terrain.step,gridZ=terrain.depth/terrain.step;
 import { createTransportLayer } from './transport-layer.js';
 import { setLocationPhoto } from './photo-viewer.js';
@@ -34,7 +31,7 @@ const homeTarget=new THREE.Vector3(...CONFIG.home.target), homeOffset=new THREE.
 const fittedHomeOffset=()=>homeOffset.clone().multiplyScalar(Math.max(1,(window.innerWidth<=700?.95:.73)/(viewport.clientWidth/viewport.clientHeight)));
 let initialSize=true, overview=true, transportLayer, selectedStation=null, routeGroup=null, terrainSurfaceHeight=height;
 let locationWatchId=null,locationFollowing=false,locationInside=false,locationHasCentered=false,locationAccuracy=null;
-let journeyArrived=false,journeyStarted=false;
+let journeyArrived=false,journeyStarted=false,journeyEntryChosen=journeyEntries.length===1;
 let userLocationLayer=null,userLocationAccuracy=null,userLocationMarker=null,userLocationPoint=null,userLocationTarget=null;
 const destinationName=()=>selected?locations.find(l=>l.id===selected).name:selectedStation?selectedStation.name+'站':null;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -220,18 +217,24 @@ function createUserLocation(){
  const label=document.createElement('div');label.className='map-marker user-location-marker';label.setAttribute('role','status');label.setAttribute('aria-label','我的实时位置');label.innerHTML='<span class="marker-dot"></span><span class="marker-name">我的位置</span>';label.style.visibility='hidden';markerLayer.append(label);
  userLocationMarker={loc:{point:new THREE.Vector3()},el:label,isUser:true};markers.push(userLocationMarker);
 }
+function createJourneyEntryMarkers(){
+ if(journeyEntries.length<2)return;
+ journeyEntries.forEach(entry=>{const point=pos(entry.lng,entry.lat),ground=terrainSurfaceHeight(point.x,point.z),button=document.createElement('button');button.className='map-marker entrance-marker';button.dataset.entryId=entry.id;button.setAttribute('aria-label',`选择${entry.name}导航`);button.setAttribute('aria-pressed',String(entry===journeyEntry));button.innerHTML=`<span class="marker-dot"></span><span class="marker-name">${entry.name}</span>`;button.onclick=()=>selectJourneyEntry(entry,true,true);markerLayer.append(button);markers.push({loc:{id:`journey-${entry.id}`,point:new THREE.Vector3(point.x,ground+metres(4),point.z)},el:button,isJourneyEntry:true,entry});});
+}
 function createMarkers(){locations.forEach((loc,i)=>{const b=document.createElement('button');b.className='map-marker';b.dataset.id=loc.id;b.setAttribute('aria-label',`飞往${loc.name}`);b.innerHTML=`<span class="marker-dot"></span><span class="marker-name">${loc.name}</span>`;b.onclick=()=>flyTo(loc.id);markerLayer.append(b);markers.push({loc,el:b});});
  const label=document.createElement('div');label.className='lake-label';label.innerHTML=`${CONFIG.lake.name}<small>${CONFIG.lake.en}</small>`;markerLayer.append(label);markers.push({loc:{point:pos(CONFIG.lake.lng,CONFIG.lake.lat)},el:label,isLake:true});
+ createJourneyEntryMarkers();
  createUserLocation();
 }
 function updateMarkers(){const width=viewport.clientWidth,height=viewport.clientHeight;const distance=camera.position.distanceTo(controls.target);const occupied=[],labelBoxes=[];
- const priority=m=>m.isUser?3:m.loc.id===selected?2:m.isLake?0:1,sorted=[...markers].sort((a,b)=>priority(b)-priority(a));
+ const priority=m=>m.isUser?4:m.isJourneyEntry&&m.entry===journeyEntry?3:m.isJourneyEntry?2.6:m.loc.id===selected?2:m.isLake?0:1,sorted=[...markers].sort((a,b)=>priority(b)-priority(a));
  for(const m of sorted){v.copy(m.loc.point).project(camera);const x=(v.x*.5+.5)*width,y=(-v.y*.5+.5)*height;let visible=v.z<1&&v.z>0&&x>15&&x<width-15&&y>70&&y<height-85&&(labelsVisible||m.loc.id===selected||m.isLake||m.isUser);
+ if(m.isJourneyEntry)visible=v.z<1&&v.z>0&&x>15&&x<width-15&&y>70&&y<height-85&&(labelsVisible||m.entry===journeyEntry);
  if(m.isUser)visible=visible&&locationInside;
  if(m.isLake){visible=visible&&distance>Math.min(290,terrain.width*.48);m.el.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%)`;}
- else{if(m.loc.id!==selected&&occupied.some(p=>Math.abs(p[0]-x)<106&&Math.abs(p[1]-y)<36))visible=false;if(visible)occupied.push([x,y]);m.el.style.transform=`translate(${x}px,${y}px) translate(-50%,-100%)`;}
+ else{if(priority(m)<2.5&&occupied.some(p=>Math.abs(p[0]-x)<106&&Math.abs(p[1]-y)<36))visible=false;if(visible)occupied.push([x,y]);m.el.style.transform=`translate(${x}px,${y}px) translate(-50%,-100%)`;}
  m.el.style.visibility=visible?'visible':'hidden';
- if(visible){const w=m.el.offsetWidth,h=m.el.offsetHeight,top=m.isLake?y-h/2:y-h;labelBoxes.push({left:x-w/2,right:x+w/2,top,bottom:top+h,el:m.el,canYield:m.loc.id!==selected&&!m.isUser});}
+ if(visible){const w=m.el.offsetWidth,h=m.el.offsetHeight,top=m.isLake?y-h/2:y-h;labelBoxes.push({left:x-w/2,right:x+w/2,top,bottom:top+h,el:m.el,canYield:m.loc.id!==selected&&!m.isUser&&!m.isJourneyEntry});}
  }
  const origin=viewport.getBoundingClientRect();
  const blocked=[...document.querySelectorAll('#sidebar,#detail,.map-controls,.transport-controls,.destination-switch')].filter(el=>!el.hidden&&getComputedStyle(el).display!=='none').map(el=>{const r=el.getBoundingClientRect();return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};});
@@ -257,10 +260,17 @@ function amapNavigationUrl(mode){
 }
 function updateJourneyUI(){
  const button=$('#journey-action'),text=$('#journey-action-text');if(!journeyEntry){button.hidden=true;return;}
- const state=journeyStarted?'active':journeyArrived?'arrived':'planning';button.dataset.state=state;text.textContent=journeyStarted?'查看路线':journeyArrived?'开始路线':`去${journeyEntry.name}`;
- button.setAttribute('aria-label',journeyStarted?'查看推荐路线':journeyArrived?`已到达${journeyEntry.name}，开始推荐路线`:`导航到${journeyEntry.name}`);
- $('#journey-title').textContent=`前往${journeyEntry.name}`;$('#journey-copy').textContent=`选择交通方式，将打开高德地图导航到${journeyEntry.name}。`;$('#journey-arrived').textContent=`我已到达${journeyEntry.name}`;
+ const multiple=journeyEntries.length>1,state=journeyStarted?'active':journeyArrived?'arrived':'planning';button.dataset.state=state;text.textContent=journeyStarted?'查看路线':journeyArrived?'开始路线':multiple&&!journeyEntryChosen?'选择入口':`去${journeyEntry.name}`;
+ button.setAttribute('aria-label',journeyStarted?'查看推荐路线':journeyArrived?`已到达${journeyEntry.name}，开始推荐路线`:multiple?'选择入口并导航':`导航到${journeyEntry.name}`);
+ $('#journey-title').textContent=multiple?`选择${CONFIG.name}入口`:`前往${journeyEntry.name}`;$('#journey-copy').textContent=multiple?`已选择${journeyEntry.name}，再选择交通方式开始导航。`:`选择交通方式，将打开高德地图导航到${journeyEntry.name}。`;$('#journey-arrived').textContent=`我已到达${journeyEntry.name}`;
+ const section=$('#journey-entry-section'),list=$('#journey-entry-list');section.hidden=!multiple;
+ if(multiple&&!list.childElementCount)journeyEntries.forEach(entry=>{const entryButton=document.createElement('button');entryButton.type='button';entryButton.className='journey-entry';entryButton.dataset.journeyEntry=entry.id;entryButton.innerHTML=`<strong>${entry.name}${entry.recommended?'<span class="journey-entry-recommended">推荐</span>':''}</strong><small>${entry.access||'景区入口'}</small>`;entryButton.onclick=()=>selectJourneyEntry(entry);list.append(entryButton);});
+ document.querySelectorAll('[data-journey-entry]').forEach(entryButton=>entryButton.setAttribute('aria-pressed',String(entryButton.dataset.journeyEntry===journeyEntry.id)));
+ document.querySelectorAll('[data-entry-id]').forEach(marker=>{const active=marker.dataset.entryId===journeyEntry.id;marker.classList.toggle('active',active);marker.setAttribute('aria-pressed',String(active));});
  document.querySelectorAll('[data-journey-mode]').forEach(link=>link.href=amapNavigationUrl(link.dataset.journeyMode));
+}
+function selectJourneyEntry(entry,focus=false,openPanel=false){
+ if(!entry||journeyStarted)return;const changed=entry!==journeyEntry;journeyEntry=entry;journeyEntryChosen=true;if(changed)journeyArrived=false;updateJourneyUI();if(focus)focusJourneyEntry();if(openPanel&&!$('#journey-panel').open)$('#journey-panel').showModal();const message=`已选择入口 · ${entry.name}`;$('#status').textContent=message;$('#live').textContent=message;
 }
 function focusJourneyEntry(){
  if(!ready||!journeyEntry)return;
@@ -293,7 +303,7 @@ function updateUserLocation(position){
  const ground=terrainSurfaceHeight(p.x,p.z),nextTarget=new THREE.Vector3(p.x,ground+metres(2),p.z),previousTarget=userLocationTarget?.clone();
  userLocationPoint=new THREE.Vector3(p.x,ground+metres(5),p.z);userLocationTarget=nextTarget;userLocationMarker.loc.point.copy(userLocationPoint);
  userLocationLayer.position.set(p.x,ground+.18,p.z);userLocationLayer.visible=true;userLocationAccuracy.scale.setScalar(metres(Math.min(300,Math.max(accuracy||8,8))));
- if(!journeyArrived&&journeyEntry&&(accuracy||0)<150&&distanceMetres(longitude,latitude,journeyEntry.lng,journeyEntry.lat)<(journeyConfig.arrivalRadiusMeters||90))markJourneyArrived(false);
+ if(!journeyArrived&&journeyEntry&&(accuracy||0)<150&&distanceMetres(longitude,latitude,journeyEntry.lng,journeyEntry.lat)<(journeyEntry.arrivalRadiusMeters||journeyConfig.arrivalRadiusMeters||90))markJourneyArrived(false);
  const message=locationStatusText();$('#status').textContent=message;$('#live').textContent=message;userLocationMarker.el.setAttribute('aria-label',`${message}，我的位置`);
  if(locationFollowing&&!locationHasCentered)focusUserLocation();
  else if(locationFollowing&&previousTarget){const delta=nextTarget.clone().sub(previousTarget);if(flight){flight.target.add(delta);flight.to.add(delta);}else{camera.position.add(delta);controls.target.add(delta);}}
@@ -378,4 +388,4 @@ window.addEventListener('pagehide',()=>stopLocationTracking(false));
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.querySelector('dialog[open]'))return;cancelFlight();$('#detail').hidden=true;updateFraming();$('#sidebar').classList.remove('mobile-open');}if(e.target===renderer?.domElement){if(e.key==='Home'){e.preventDefault();resetView();}if(e.key==='+'||e.key==='=')$('#zoom-in').click();if(e.key==='-')$('#zoom-out').click();}});
 updateJourneyUI();
 setTimeout(init,70);
-window.travelMap={flyTo,resetView,getState:()=>({ready,selected,flying:!!flight,camera:camera?.position.toArray(),target:controls?.target.toArray(),locations:locations.map(l=>({id:l.id,lng:l.lng,lat:l.lat})),journey:{entry:journeyEntry?{name:journeyEntry.name,lng:journeyEntry.lng,lat:journeyEntry.lat}:null,arrived:journeyArrived,started:journeyStarted},geolocation:{active:locationWatchId!==null,following:locationFollowing,inside:locationInside,accuracy:locationAccuracy,point:userLocationPoint?.toArray()||null},drawCalls:renderer?.info.render.calls})};
+window.travelMap={flyTo,resetView,getState:()=>({ready,selected,flying:!!flight,camera:camera?.position.toArray(),target:controls?.target.toArray(),locations:locations.map(l=>({id:l.id,lng:l.lng,lat:l.lat})),journey:{entry:journeyEntry?{id:journeyEntry.id,name:journeyEntry.name,lng:journeyEntry.lng,lat:journeyEntry.lat}:null,entries:journeyEntries.map(entry=>({id:entry.id,name:entry.name,lng:entry.lng,lat:entry.lat})),arrived:journeyArrived,started:journeyStarted},geolocation:{active:locationWatchId!==null,following:locationFollowing,inside:locationInside,accuracy:locationAccuracy,point:userLocationPoint?.toArray()||null},drawCalls:renderer?.info.render.calls})};
