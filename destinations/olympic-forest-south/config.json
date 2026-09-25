@@ -8,12 +8,12 @@
   "brandEnglish": "OLYMPIC FOREST PARK · SOUTH",
   "locationLabel": "北京 · 朝阳",
   "sidebar": {
-    "heading": "南园骨架",
+    "heading": "南园山水",
     "caption": "奥海映秋，仰山入林",
     "captionEnglish": "AOHAI WATER · YANGSHAN WOODS",
-    "footer": "当前仅展示基础空间数据",
-    "image": "public/images/olympic-forest-south/hero.svg",
-    "imageAlt": "奥森南园奥海、仰山和秋林的地图化插画"
+    "footer": "选一处景点，即刻漫游",
+    "image": "public/images/olympic-forest-south/south-gate.jpg",
+    "imageAlt": "奥林匹克森林公园南门与入口广场俯瞰实景"
   },
   "kicker": {
     "eyebrow": "SOUTH PARK · STRUCTURE PREVIEW",

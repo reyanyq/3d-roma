@@ -1,1 +1,72 @@
-{}
+{
+  "flower-valley": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:East_Entrace_of_Haidian_Park.jpg",
+    "author": "钉钉",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "海淀公园东门入口、台阶与林荫实景",
+    "src": "public/images/haidian-park/flower-valley.jpg",
+    "focus": "50% 60%"
+  },
+  "danleng": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Haidian_Park_3.jpg",
+    "author": "钉钉",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "海淀公园湖岸、水生植物与木栈道实景",
+    "src": "public/images/haidian-park/danleng.jpg"
+  },
+  "wanquan": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Haidian_Park_2.jpg",
+    "author": "钉钉",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "海淀公园叠石瀑布与溪流实景",
+    "src": "public/images/haidian-park/wanquan.jpg",
+    "focus": "50% 58%"
+  },
+  "immortal-dew": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Haidian_Park_0.jpg",
+    "author": "钉钉",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "海淀公园水车、芦苇与柳林景观",
+    "src": "public/images/haidian-park/immortal-dew.jpg"
+  },
+  "farming-pavilion": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E6%B5%B7%E6%B7%80%E5%85%AC%E5%9B%AD%EF%BC%8C%E6%99%AF%E8%A7%82%EF%BC%8C%E5%8F%A4%E4%BA%AD%E8%A7%82%E7%A8%BC%E7%9A%84%E4%BA%AD%E5%AD%90.jpg",
+    "author": "Suiyuanjiuyou",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "海淀公园古亭观稼的茅草顶木亭",
+    "src": "public/images/haidian-park/farming-pavilion.jpg",
+    "focus": "50% 48%"
+  },
+  "royal-rice": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E6%B5%B7%E6%B7%80%E5%85%AC%E5%9B%AD%EF%BC%8C%E6%99%AF%E8%A7%82%EF%BC%8C%E5%BE%A1%E7%A8%BB%E7%95%99%E9%A6%99.jpg",
+    "author": "Suiyuanjiuyou",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "海淀公园御稻流香景区入口与稻田环境",
+    "src": "public/images/haidian-park/royal-rice.jpg",
+    "focus": "50% 56%"
+  },
+  "taoyuan": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E6%B5%B7%E6%B7%80%E5%85%AC%E5%9B%AD%EF%BC%8C%E6%99%AF%E8%A7%82%EF%BC%8C%E8%AE%A8%E6%BA%90%E4%B9%A6%E5%A3%B0.jpg",
+    "author": "Suiyuanjiuyou",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "海淀公园讨源书声景区的介绍牌",
+    "src": "public/images/haidian-park/taoyuan.jpg",
+    "focus": "50% 55%"
+  },
+  "double-bridge": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Haidian_Park_1.jpg",
+    "author": "钉钉",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "海淀公园水面、睡莲与木桥实景",
+    "src": "public/images/haidian-park/double-bridge.jpg",
+    "focus": "50% 53%"
+  }
+}

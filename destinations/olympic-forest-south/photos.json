@@ -1,1 +1,38 @@
-{}
+{
+  "south-gate": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E5%8C%97%E4%BA%AC%E5%A5%A5%E6%9E%97%E5%85%8B%E6%A3%AE%E6%9E%97%E5%85%AC%E5%9B%AD%E5%8D%97%E5%A4%A7%E9%97%A8%E4%BF%AF%E7%9E%B0.JPG",
+    "author": "Hat600",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "从高处俯瞰奥林匹克森林公园南门和入口广场",
+    "src": "public/images/olympic-forest-south/south-gate.jpg",
+    "focus": "50% 58%"
+  },
+  "aohai": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Olympic_Forest_Park.jpg",
+    "author": "螺钉",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "奥林匹克森林公园湖面、奥林匹克塔与湖岸绿地",
+    "src": "public/images/olympic-forest-south/aohai.jpg",
+    "focus": "50% 58%"
+  },
+  "wetland": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Constructed_wetland_in_Olympic_Forest_Park_(4176672242).jpg",
+    "author": "SuSanA Secretariat",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "alt": "奥林匹克森林公园人工湿地与大片水生植物",
+    "src": "public/images/olympic-forest-south/wetland.jpg",
+    "focus": "50% 58%"
+  },
+  "yangshan": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:View_from_the_top_of_the_mountain_of_the_Olympic_Forest_Park_(3706211980).jpg",
+    "author": "SuSanA Secretariat",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "alt": "从奥林匹克森林公园山顶眺望奥海与城市天际线",
+    "src": "public/images/olympic-forest-south/yangshan.jpg",
+    "focus": "50% 58%"
+  }
+}

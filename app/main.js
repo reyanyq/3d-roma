@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { loadDestination } from './destination-loader.js?v=20260925-routes1';
+import { loadDestination } from './destination-loader.js?v=20260925-photos1';
 import { createSummerLandmark, createCoveredCorridors } from './summer-models.js';
 let CONFIG;
 try{
