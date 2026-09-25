@@ -11,6 +11,10 @@ const text = async url => {
 };
 
 function hydrate(config, registry, sourcesHtml) {
+  document.body.classList.toggle('sidebar-disabled', config.features?.sidebar === false);
+  document.querySelector('.transport-controls').hidden = Boolean(config.features?.hideTransportControls);
+  document.querySelector('#toggle-roads').hidden = Boolean(config.features?.hideRoadControl);
+  document.querySelector('#toggle-metro').hidden = Boolean(config.features?.hideMetroControl);
   document.title = config.pageTitle;
   const description = document.querySelector('meta[name="description"]');
   if (description && config.description) description.content = config.description;
@@ -30,6 +34,16 @@ function hydrate(config, registry, sourcesHtml) {
   document.querySelector('#loading-text').textContent = config.loadingText;
   document.querySelector('#transport-labels').setAttribute('aria-label', `主要道路与${config.transportName}`);
   document.querySelector('#toggle-metro-text').textContent = config.transportName;
+  const routeButton = document.querySelector('#toggle-route');
+  routeButton.hidden = !config.route;
+  if (config.route) {
+    const distance = config.route.distanceMeters >= 1000
+      ? `${(config.route.distanceMeters / 1000).toFixed(1)} 公里`
+      : `${config.route.distanceMeters} 米`;
+    document.querySelector('#toggle-route-text').textContent = `${config.route.durationMinutes} 分路线`;
+    routeButton.title = `${config.route.name} · 约 ${distance}`;
+    routeButton.setAttribute('aria-label', `${config.route.name}，约 ${distance}`);
+  }
   document.querySelector('#detail-collection').textContent = `${config.name.toUpperCase()} COLLECTION`;
   document.querySelector('#sources-content').innerHTML = sourcesHtml;
 
@@ -41,6 +55,12 @@ function hydrate(config, registry, sourcesHtml) {
     if (item.id === config.slug) link.setAttribute('aria-current', 'page');
     return link;
   }));
+  requestAnimationFrame(() => {
+    const current = navigation.querySelector('[aria-current="page"]');
+    if (current && navigation.scrollWidth > navigation.clientWidth) {
+      navigation.scrollLeft = current.offsetLeft - (navigation.clientWidth - current.offsetWidth) / 2;
+    }
+  });
 }
 
 export async function loadDestination() {
@@ -51,7 +71,7 @@ export async function loadDestination() {
   const configUrl = new URL(`../destinations/${entry.config}`, import.meta.url);
   const config = await json(configUrl);
   const base = new URL('./', configUrl);
-  const [geo, locations, photos, transport, sourcesHtml, landTriangles] = await Promise.all([
+  const [geo, locations, photos, transport, sourcesHtml, landTriangles, route] = await Promise.all([
     json(new URL(config.data.map, base)),
     json(new URL(config.data.places, base)),
     json(new URL(config.data.photos, base)),
@@ -59,12 +79,16 @@ export async function loadDestination() {
     text(new URL(config.data.sources, base)),
     config.data.landTriangles
       ? json(new URL(config.data.landTriangles, base))
+      : Promise.resolve(null),
+    config.data.route
+      ? json(new URL(config.data.route, base))
       : Promise.resolve(null)
   ]);
   for (const photo of Object.values(photos)) photo.src = new URL(photo.src, document.baseURI).href;
   config.sidebar.image = new URL(config.sidebar.image, document.baseURI).href;
   const destination = {...config, geo, locations, photos, transport};
   if (landTriangles) destination.landTriangles = landTriangles;
+  if (route) destination.route = route;
   hydrate(destination, registry, sourcesHtml);
   return destination;
 }

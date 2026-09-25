@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { loadDestination } from './destination-loader.js';
+import { loadDestination } from './destination-loader.js?v=20260925-olympic4';
 import { createSummerLandmark, createCoveredCorridors } from './summer-models.js';
 let CONFIG;
 try{
@@ -11,7 +11,7 @@ try{
  loading.innerHTML='<strong>景区数据加载失败</strong><p>请确认本地服务已启动，并检查景区配置文件。</p>';
  throw error;
 }
-const {geo:GEO,photos:PHOTOS,transport:TRANSPORT,locations}=CONFIG;
+const {geo:GEO,photos:PHOTOS,transport:TRANSPORT,locations,route:ROUTE}=CONFIG;
 const terrain=CONFIG.terrain,halfX=terrain.width/2,halfZ=terrain.depth/2,gridX=terrain.width/terrain.step,gridZ=terrain.depth/terrain.step;
 import { createTransportLayer } from './transport-layer.js';
 import { setLocationPhoto } from './photo-viewer.js';
@@ -23,7 +23,7 @@ let renderer, scene, camera, controls, flight=null, selected=null, labelsVisible
 const v=new THREE.Vector3(), markers=[], waterMeshes=[];
 const homeTarget=new THREE.Vector3(...CONFIG.home.target), homeOffset=new THREE.Vector3(...CONFIG.home.offset);
 const fittedHomeOffset=()=>homeOffset.clone().multiplyScalar(Math.max(1,(window.innerWidth<=700?.95:.73)/(viewport.clientWidth/viewport.clientHeight)));
-let initialSize=true, overview=true, transportLayer, selectedStation=null, terrainSurfaceHeight=height;
+let initialSize=true, overview=true, transportLayer, selectedStation=null, routeGroup=null, terrainSurfaceHeight=height;
 const destinationName=()=>selected?locations.find(l=>l.id===selected).name:selectedStation?selectedStation.name+'站':null;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let rngSeed=57019;
@@ -48,7 +48,7 @@ const materials={
 };
 function makeMesh(geo,mat,parent=scene){const m=new THREE.Mesh(geo,mat);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 function box(w,h,d,x,y,z,mat,parent){const m=makeMesh(new THREE.BoxGeometry(w,h,d),mat,parent);m.position.set(x,y,z);return m;}
-function pathMesh(points,width,color,yOffset=.08){
+function pathMesh(points,width,color,yOffset=.08,parent=scene){
  if(points.length<2)return;const vertices=[];
  for(let i=1;i<points.length;i++){
   const a=points[i-1],b=points[i],dx=b[0]-a[0],dz=b[1]-a[1],length=Math.hypot(dx,dz);if(length<.001)continue;
@@ -58,7 +58,14 @@ function pathMesh(points,width,color,yOffset=.08){
   for(const index of [0,1,2,2,1,3])vertices.push(...corners[index]);
  }
  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.computeVertexNormals();
- const mesh=makeMesh(geometry,new THREE.MeshStandardMaterial({color,roughness:1,side:THREE.DoubleSide}));mesh.castShadow=false;
+ const mesh=makeMesh(geometry,new THREE.MeshStandardMaterial({color,roughness:1,side:THREE.DoubleSide}),parent);mesh.castShadow=false;return mesh;
+}
+
+function createRecommendedRoute(){
+ if(!ROUTE?.points?.length)return;
+ routeGroup=new THREE.Group();routeGroup.name=ROUTE.name;scene.add(routeGroup);
+ pathMesh(ROUTE.points,1.02,0xf4e5c5,.52,routeGroup);
+ pathMesh(ROUTE.points,.42,0xb95e3d,.58,routeGroup);
 }
 function wallMesh(points,width,wallHeight,color,baseOffset=0){
  if(points.length<2)return;const vertices=[];
@@ -171,7 +178,8 @@ function createTerrain(){
  const treePoints=[];
  for(let i=0;i<100000&&treePoints.length<CONFIG.treeCount;i++){const x=-halfX+5+rand()*(terrain.width-10),z=-halfZ+7+rand()*(terrain.depth-15);if(isWater(x,z))continue;if(!CONFIG.features?.uniformTrees&&x>(CONFIG.id==='westlake'?115:90)&&rand()>.09)continue;if(!CONFIG.features?.uniformTrees&&rawHeight(x,z)<(CONFIG.id==='westlake'?7:3)&&rand()>.38)continue;if((CONFIG.id==='summer-palace'||CONFIG.features?.avoidBuildingTrees)&&buildingBounds.some(b=>x>=b.minX&&x<=b.maxX&&z>=b.minZ&&z<=b.maxZ&&within(x,z,b.p)))continue;if(CONFIG.features?.avoidWallTrees&&nearWall(x,z,1.45))continue;const h=height(x,z);treePoints.push({x,z,h,s:.32+rand()*.4});}
  const trees=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),new THREE.MeshStandardMaterial({roughness:1,flatShading:true}),treePoints.length);const dummy=new THREE.Object3D();
- treePoints.forEach((p,i)=>{dummy.position.set(p.x,p.h+p.s*1.1,p.z);dummy.scale.set(p.s,p.s*(1.1+rand()*.65),p.s);dummy.rotation.y=rand()*6.28;dummy.updateMatrix();trees.setMatrixAt(i,dummy.matrix);trees.setColorAt(i,new THREE.Color().setHSL(.28+rand()*.06,.19+rand()*.14,.31+rand()*.14));});trees.castShadow=true;trees.receiveShadow=true;scene.add(trees);
+ const treePalette=CONFIG.treePalette?.colors;
+ treePoints.forEach((p,i)=>{dummy.position.set(p.x,p.h+p.s*1.1,p.z);dummy.scale.set(p.s,p.s*(1.1+rand()*.65),p.s);dummy.rotation.y=rand()*6.28;dummy.updateMatrix();trees.setMatrixAt(i,dummy.matrix);const color=treePalette?.length?new THREE.Color(treePalette[Math.floor(rand()*treePalette.length)]):new THREE.Color().setHSL(.28+rand()*.06,.19+rand()*.14,.31+rand()*.14);trees.setColorAt(i,color);});if(trees.instanceColor)trees.instanceColor.needsUpdate=true;trees.castShadow=true;trees.receiveShadow=true;scene.add(trees);
  // Quiet glints and a few small boats make the water readable from a distance.
  const ripples=[];for(let i=0;i<950;i++){const x=-halfX*.8+rand()*halfX*1.6,z=-halfZ*.8+rand()*halfZ*1.6;if(isWater(x,z)&&isWater(x+3,z)){ripples.push(x,1.13,z,x+1+rand()*2,1.13,z);}}
  const rg=new THREE.BufferGeometry();rg.setAttribute('position',new THREE.Float32BufferAttribute(ripples,3));scene.add(new THREE.LineSegments(rg,new THREE.LineBasicMaterial({color:0xe0ece2,opacity:.19,transparent:true})));
@@ -199,7 +207,7 @@ function updateMarkers(){const width=viewport.clientWidth,height=viewport.client
 function smooth(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
 function animateTo(target,offset,duration=1800){flight={start:performance.now(),duration:reduced?1:duration,from:camera.position.clone(),fromTarget:controls.target.clone(),to:target.clone().add(offset),target:target.clone()};controls.autoRotate=false;$('#orbit').setAttribute('aria-pressed','false');}
 function flyTo(id){const loc=locations.find(l=>l.id===id);if(!loc||!ready)return;selected=id;selectedStation=null;transportLayer?.select(null);overview=false;topView=false;$('#topview').setAttribute('aria-pressed','false');document.querySelectorAll('[data-id]').forEach(e=>{e.classList.toggle('active',e.dataset.id===id);if(e.classList.contains('place'))e.setAttribute('aria-pressed',String(e.dataset.id===id));});
- $('#detail').hidden=false;$('#detail').scrollTop=0;setLocationPhoto(loc,PHOTOS[loc.id]);updateFraming();$('#detail-title').textContent=loc.name;$('#detail-en').textContent=loc.en;$('#detail-tag').textContent=loc.tag;$('#detail-description').textContent=loc.desc;$('#detail-tip').textContent=loc.tip;$('#detail-index').textContent=String(locations.indexOf(loc)+1).padStart(2,'0');$('#coordinates').textContent=`${loc.lat.toFixed(4)}° N · ${loc.lng.toFixed(4)}° E`;
+ $('#detail').hidden=false;$('#detail').scrollTop=0;setLocationPhoto(loc,PHOTOS[loc.id]);updateFraming();$('#detail-title').textContent=loc.name;$('#detail-en').textContent=loc.en;$('#detail-tag').textContent=loc.tag;$('#detail-description').textContent=loc.desc;$('#detail-tip').textContent=loc.tip;$('#detail-index').textContent=String(locations.indexOf(loc)+1).padStart(2,'0');$('#coordinates').textContent='位置仅作旅游示意 · 非测绘/导航依据';
  $('#status').textContent=`正在飞往 · ${loc.name}`;$('#live').textContent=`正在飞往${loc.name}`;
  const offset=loc.cameraOffset?new THREE.Vector3(...loc.cameraOffset):loc.kind==='pagoda'?new THREE.Vector3(16,20,28):loc.kind==='bridge'?new THREE.Vector3(10,14,19):loc.kind==='temple'?new THREE.Vector3(16,22,32):new THREE.Vector3(28,32,42);
  animateTo(loc.ground.clone().add(new THREE.Vector3(0,loc.focusHeight,0)),offset,1900);$('#sidebar').classList.remove('mobile-open');$('#open-places').setAttribute('aria-expanded','false');}
@@ -219,7 +227,7 @@ function init(){try{
  scene=new THREE.Scene();scene.fog=new THREE.Fog(0xeef1ea,1100,1900);camera=new THREE.PerspectiveCamera(39,1,.1,2200);camera.position.copy(homeTarget).add(homeOffset);
  scene.add(new THREE.HemisphereLight(0xfaf8e9,0x778e74,1.8));const sun=new THREE.DirectionalLight(0xfff3d7,2.4);sun.position.set(-220,450,190);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-430,right:430,top:400,bottom:-400,near:50,far:900});sun.shadow.bias=-.0007;sun.shadow.normalBias=.65;scene.add(sun);
  controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=4;controls.maxDistance=1600;controls.minPolarAngle=.03;controls.maxPolarAngle=Math.PI*.455;controls.target.copy(homeTarget);controls.autoRotateSpeed=.45;controls.panSpeed=.8;controls.screenSpacePanning=false;controls.zoomSpeed=.8;controls.addEventListener('start',()=>{overview=false;cancelFlight();});controls.addEventListener('end',()=>{$('#status').textContent=destinationName()||'自由探索';});
- createTerrain();createMarkers();transportLayer=createTransportLayer({roads:TRANSPORT.roads,stations:TRANSPORT.stations,scene,layer:$('#transport-labels'),height:terrainSurfaceHeight,projection:CONFIG.projection,terrain,onStationSelect:flyToStation});ready=true;document.body.classList.add('ready');$('#loading').hidden=true;$('#status').textContent=CONFIG.name+'全景';resize();requestAnimationFrame(render);
+ createTerrain();createRecommendedRoute();createMarkers();transportLayer=createTransportLayer({roads:TRANSPORT.roads,stations:TRANSPORT.stations,scene,layer:$('#transport-labels'),height:terrainSurfaceHeight,projection:CONFIG.projection,terrain,onStationSelect:flyToStation});ready=true;document.body.classList.add('ready');$('#loading').hidden=true;$('#status').textContent=CONFIG.name+'全景';resize();requestAnimationFrame(render);
  }catch(error){console.error(error);$('#loading').hidden=false;$('#loading').innerHTML='<strong>暂时无法显示 3D 地图</strong><p>请使用支持 WebGL 的现代浏览器，并开启硬件加速。</p><button onclick="location.reload()">重新加载</button>';$('#status').textContent='地图加载失败';}}
 function updateFraming(){
  if(!camera)return;
@@ -243,6 +251,7 @@ $('#zoom-out').onclick=()=>{overview=false;if(ready)animateTo(controls.target,ca
 $('#topview').onclick=()=>{if(!ready)return;overview=false;topView=!topView;$('#topview').setAttribute('aria-pressed',String(topView));animateTo(controls.target,topView?new THREE.Vector3(0,Math.max(camera.position.distanceTo(controls.target),250),1):homeOffset.clone().normalize().multiplyScalar(camera.position.distanceTo(controls.target)),1000);};
 $('#toggle-roads').onclick=()=>{if(ready)$('#toggle-roads').setAttribute('aria-pressed',String(transportLayer.toggleRoads()));};
 $('#toggle-metro').onclick=()=>{if(ready)$('#toggle-metro').setAttribute('aria-pressed',String(transportLayer.toggleStations()));};
+$('#toggle-route').onclick=()=>{if(!ready||!routeGroup)return;routeGroup.visible=!routeGroup.visible;$('#toggle-route').setAttribute('aria-pressed',String(routeGroup.visible));const distance=ROUTE.distanceMeters>=1000?`${(ROUTE.distanceMeters/1000).toFixed(1)} 公里`:`${ROUTE.distanceMeters} 米`;$('#status').textContent=routeGroup.visible?`${ROUTE.durationMinutes} 分秋游 · 约 ${distance}`:'秋游路线已隐藏';$('#live').textContent=$('#status').textContent;};
 $('#labels').onclick=()=>{labelsVisible=!labelsVisible;$('#labels').setAttribute('aria-pressed',String(labelsVisible));};
 $('#orbit').onclick=()=>{if(!ready)return;overview=false;cancelFlight();controls.autoRotate=!controls.autoRotate;$('#orbit').setAttribute('aria-pressed',String(controls.autoRotate));};
 $('#compass').onclick=()=>{overview=false;if(ready)animateTo(controls.target,new THREE.Vector3(0,camera.position.y-controls.target.y,Math.hypot(camera.position.x-controls.target.x,camera.position.z-controls.target.z)),800);};

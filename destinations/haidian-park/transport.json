@@ -1,0 +1,14 @@
+{
+  "roads": [],
+  "stations": [
+    {
+      "id": "wanquanheqiao",
+      "name": "万泉河桥",
+      "lng": 116.29365,
+      "lat": 39.98438,
+      "lines": [16],
+      "osmUrl": "https://www.openstreetmap.org/node/8263474199",
+      "sourceUrl": "https://www.bjsubway.com/station/xltcx/linecenter.html?lineId=543"
+    }
+  ]
+}

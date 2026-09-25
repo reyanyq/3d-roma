@@ -1,0 +1,54 @@
+{
+  "id": "haidian-park",
+  "slug": "haidian-park",
+  "name": "海淀公园",
+  "pageTitle": "海淀公园漫游 · 轻量化 3D 样片",
+  "description": "基于公开地图数据生成的海淀公园轻量化 3D 互动样片，可旋转、缩放并点击景点飞行。",
+  "brandTitle": "海淀公园漫游",
+  "brandEnglish": "HAIDIAN PARK · BEIJING",
+  "locationLabel": "北京 · 海淀",
+  "sidebar": {
+    "heading": "畅春遗韵",
+    "caption": "一园稻香，水岸花谷",
+    "captionEnglish": "A WALK THROUGH HAIDIAN PARK",
+    "footer": "选一处景点，即刻漫游",
+    "image": "public/images/haidian-park/hero.svg",
+    "imageAlt": "海淀公园水面、花谷与秋林的样片封面插画"
+  },
+  "kicker": {
+    "eyebrow": "HAIDIAN PARK EXPLORER",
+    "title": "花谷 · 稻田 · 水岸"
+  },
+  "loadingText": "正在铺开公园步道与水岸…",
+  "transportName": "地铁站",
+  "projection": {"lng": 116.2895, "lat": 39.98435, "xFactor": 8540, "zFactor": 11120},
+  "terrain": {
+    "width": 110,
+    "depth": 110,
+    "step": 2.5,
+    "base": 1.6,
+    "shoreBlend": 5,
+    "hills": []
+  },
+  "home": {"target": [0, 0, -2], "offset": [72, 88, 108]},
+  "palette": {"roof": "#6f795d", "wall": "#d7d3bc", "red": "#9a5844", "stone": "#c9c5ad", "water": "#6f9fa0"},
+  "buildingStyle": {"wall": "#d6d2bd", "roof": "#65725b", "forcePitched": false},
+  "terrainPalette": {"base": "#a9bd82", "high": "#7f996a", "urban": "#d9d9c8", "urbanGradient": false},
+  "treePalette": {
+    "season": "late-autumn",
+    "colors": ["#4f6d54", "#58774f", "#667d50", "#c99b36", "#d8ad3e", "#e0b94b", "#b96538", "#9d4935"]
+  },
+  "lake": {"name": "海 淀 公 园", "en": "HAIDIAN PARK", "lng": 116.2894, "lat": 39.98535},
+  "boats": [],
+  "excludedBuildings": [],
+  "treeCount": 1750,
+  "features": {"uniformTrees": true, "avoidBuildingTrees": true},
+  "data": {
+    "map": "map.json",
+    "places": "places.json",
+    "photos": "photos.json",
+    "transport": "transport.json",
+    "route": "route.json",
+    "sources": "sources.html"
+  }
+}

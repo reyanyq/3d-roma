@@ -135,7 +135,7 @@ scene = {
     "buildings": buildings,
     "walls": walls,
     "source": "© OpenStreetMap contributors, ODbL 1.0",
-    "retrieved": "2026-09-20",
+    "retrieved": "2026-09-25",
 }
 Path(args.output).write_text(json.dumps(scene, ensure_ascii=False, separators=(",", ":")))
 if args.features_out:

@@ -1,0 +1,54 @@
+{
+  "id": "olympic-forest-south",
+  "slug": "olympic-forest-south",
+  "name": "奥森南园",
+  "pageTitle": "奥森南园漫游 · 轻量化 3D 骨架",
+  "description": "基于公开地图数据生成的奥林匹克森林公园南园轻量化 3D 骨架样片。",
+  "brandTitle": "奥森南园漫游",
+  "brandEnglish": "OLYMPIC FOREST PARK · SOUTH",
+  "locationLabel": "北京 · 朝阳",
+  "sidebar": {
+    "heading": "南园骨架",
+    "caption": "奥海映秋，仰山入林",
+    "captionEnglish": "AOHAI WATER · YANGSHAN WOODS",
+    "footer": "当前仅展示基础空间数据",
+    "image": "public/images/olympic-forest-south/hero.svg",
+    "imageAlt": "奥森南园奥海、仰山和秋林的地图化插画"
+  },
+  "kicker": {
+    "eyebrow": "SOUTH PARK · STRUCTURE PREVIEW",
+    "title": "奥海 · 湿地 · 仰山"
+  },
+  "loadingText": "正在铺开南园水系与步道…",
+  "transportName": "公共交通",
+  "projection": {"lng": 116.38535, "lat": 40.0149, "xFactor": 8540, "zFactor": 11120},
+  "terrain": {
+    "width": 300,
+    "depth": 165,
+    "step": 3,
+    "base": 1.6,
+    "shoreBlend": 7,
+    "hills": [[7, -30, 10, 28, 22], [-3, -47, 4, 48, 28]]
+  },
+  "home": {"target": [0, 4, -12], "offset": [150, 175, 220]},
+  "palette": {"roof": "#66705b", "wall": "#d3cfb9", "red": "#955441", "stone": "#c8c2aa", "water": "#6d9fa0"},
+  "buildingStyle": {"wall": "#d5d1bd", "roof": "#65705c", "forcePitched": false},
+  "terrainPalette": {"base": "#9fb87d", "high": "#627d58", "urban": "#d8d8c5", "urbanGradient": false},
+  "treePalette": {
+    "season": "mid-autumn",
+    "colors": ["#46684e", "#56774e", "#6f844f", "#c39a39", "#d2a844", "#b7653d", "#984a38"]
+  },
+  "lake": {"name": "奥 森 南 园", "en": "OLYMPIC FOREST SOUTH", "lng": 116.3902, "lat": 40.01455},
+  "boats": [],
+  "excludedBuildings": [],
+  "treeCount": 4200,
+  "features": {"uniformTrees": true, "avoidBuildingTrees": true, "sidebar": true, "hideRoadControl": true, "hideMetroControl": true},
+  "data": {
+    "map": "map.json",
+    "places": "places.json",
+    "photos": "photos.json",
+    "transport": "transport.json",
+    "route": "route.json",
+    "sources": "sources.html"
+  }
+}

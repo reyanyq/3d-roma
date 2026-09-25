@@ -26,5 +26,19 @@
     "name": "八达岭长城",
     "region": "延庆",
     "config": "badaling/config.json"
+  },
+  {
+    "id": "haidian-park",
+    "city": "北京",
+    "name": "海淀公园",
+    "region": "海淀",
+    "config": "haidian-park/config.json"
+  },
+  {
+    "id": "olympic-forest-south",
+    "city": "北京",
+    "name": "奥森南园",
+    "region": "朝阳",
+    "config": "olympic-forest-south/config.json"
   }
 ]

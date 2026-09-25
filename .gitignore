@@ -2,3 +2,6 @@
 node_modules/
 __pycache__/
 *.pyc
+analysis/
+artifacts/
+amap-prototype.html

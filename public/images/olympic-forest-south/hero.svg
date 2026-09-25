@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" role="img" aria-labelledby="title desc">
+  <title id="title">奥森南园秋季地图插画</title>
+  <desc id="desc">奥海水面、仰山和成片秋林构成的简洁插画</desc>
+  <rect width="1000" height="480" fill="#aebca4"/>
+  <path d="M0 360C150 278 300 298 440 242C585 184 717 180 1000 236V480H0Z" fill="#768d67"/>
+  <path d="M0 408C208 349 305 389 470 326C635 263 785 304 1000 270V480H0Z" fill="#647a5d"/>
+  <path d="M345 302C450 243 615 240 734 282C666 338 538 370 404 352C364 347 338 327 345 302Z" fill="#78a4a1"/>
+  <path d="M367 302C454 263 599 260 696 289C626 319 500 341 404 326Z" fill="#a7c2b0" opacity=".55"/>
+  <g fill="#c49b42"><circle cx="122" cy="285" r="30"/><circle cx="187" cy="254" r="42"/><circle cx="820" cy="233" r="38"/><circle cx="895" cy="257" r="30"/></g>
+  <g fill="#9a523c"><circle cx="257" cy="288" r="34"/><circle cx="765" cy="282" r="29"/><circle cx="930" cy="222" r="25"/></g>
+  <g fill="#49674e"><circle cx="73" cy="326" r="28"/><circle cx="302" cy="242" r="30"/><circle cx="718" cy="230" r="25"/><circle cx="970" cy="302" r="34"/></g>
+  <path d="M430 251Q505 116 603 248Z" fill="#6a7e61"/>
+  <path d="M476 249Q516 174 555 248Z" fill="#83946f"/>
+  <path d="M0 418C220 371 310 410 471 353C632 296 822 330 1000 296" fill="none" stroke="#e8e0bd" stroke-width="8" opacity=".8"/>
+</svg>

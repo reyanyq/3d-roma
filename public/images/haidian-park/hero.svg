@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">海淀公园轻量化三维样片封面</title>
+  <desc id="desc">以水岸、花谷、稻田和秋林为主题的原创地图化插画</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#dce8df"/><stop offset="1" stop-color="#f5f1df"/></linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6f9fa0"/><stop offset="1" stop-color="#9fc1ba"/></linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="1200" height="720" fill="url(#sky)"/>
+  <path d="M0 520C170 420 320 452 468 395C650 325 781 333 1200 208V720H0Z" fill="#a7bc83"/>
+  <path d="M0 600C220 500 395 542 580 474C770 405 920 391 1200 344V720H0Z" fill="#819d69" opacity=".72"/>
+  <path d="M293 483C373 402 520 365 647 405C732 432 752 506 678 559C600 615 420 600 326 553C280 530 265 511 293 483Z" fill="url(#water)"/>
+  <path d="M330 494C421 444 533 432 651 466" fill="none" stroke="#f4edce" stroke-width="16" stroke-linecap="round"/>
+  <path d="M682 407C792 352 912 331 1041 327" fill="none" stroke="#e9dfbf" stroke-width="14" stroke-linecap="round"/>
+  <path d="M96 594C213 529 284 479 373 401" fill="none" stroke="#d8c997" stroke-width="18" stroke-linecap="round"/>
+  <g fill="#b66645">
+    <circle cx="220" cy="392" r="47"/><circle cx="278" cy="357" r="36"/><circle cx="864" cy="291" r="50"/><circle cx="946" cy="272" r="40"/>
+  </g>
+  <g fill="#d5a84b"><circle cx="173" cy="452" r="38"/><circle cx="783" cy="341" r="34"/><circle cx="1038" cy="318" r="44"/></g>
+  <g fill="#5e7c58"><circle cx="123" cy="507" r="46"/><circle cx="742" cy="292" r="42"/><circle cx="1122" cy="282" r="51"/></g>
+  <g transform="translate(735 493)">
+    <path d="M0 55H220V137H0Z" fill="#c7b16d"/>
+    <path d="M0 55L30 25H250L220 55Z" fill="#d5c37f"/>
+    <path d="M28 71H193M28 91H193M28 111H193" stroke="#f5e7b8" stroke-width="7"/>
+  </g>
+  <g transform="translate(376 330)">
+    <path d="M0 36H128V77H0Z" fill="#e0d5b2"/>
+    <path d="M-13 36L20 6H108L141 36Z" fill="#65725b"/>
+    <path d="M29 77V45M64 77V45M99 77V45" stroke="#81664d" stroke-width="7"/>
+  </g>
+  <ellipse cx="520" cy="620" rx="430" ry="46" fill="#53664d" opacity=".18" filter="url(#soft)"/>
+</svg>
