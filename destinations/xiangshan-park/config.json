@@ -21,16 +21,16 @@
   },
   "loadingText": "正在铺开香山山路与秋林…",
   "transportName": "公共交通",
-  "projection": {"lng": 116.187, "lat": 39.994, "xFactor": 8540, "zFactor": 11120},
+  "projection": {"lng": 116.18495, "lat": 39.9905, "xFactor": 8540, "zFactor": 11120},
   "terrain": {
-    "width": 360,
-    "depth": 360,
+    "width": 250,
+    "depth": 170,
     "step": 3,
     "base": 1.8,
     "shoreBlend": 5,
-    "hills": [[-124, 33, 36, 58, 78], [-88, 8, 25, 62, 104], [-48, 42, 14, 56, 92], [-38, -55, 12, 66, 64]]
+    "hills": [[-108, -6, 36, 50, 58], [-70, -31, 25, 52, 72], [-31, 3, 14, 46, 62], [-22, 46, 10, 55, 50]]
   },
-  "home": {"target": [-38, 9, 18], "offset": [190, 205, 270]},
+  "home": {"target": [-12, 8, 4], "offset": [145, 150, 205]},
   "palette": {"roof": "#705c4d", "wall": "#d8ceb8", "red": "#9d4638", "stone": "#c6bca6", "water": "#6f9b99"},
   "buildingStyle": {"wall": "#d7cfbb", "roof": "#6d594b", "forcePitched": true},
   "terrainPalette": {"base": "#9faa72", "high": "#5c704b", "urban": "#d5d2bd", "urbanGradient": false},
@@ -41,8 +41,8 @@
   "lake": {"name": "香 山", "en": "FRAGRANT HILLS", "lng": 116.1834, "lat": 39.9904},
   "boats": [],
   "excludedBuildings": [],
-  "treeCount": 5200,
-  "features": {"uniformTrees": true, "avoidBuildingTrees": true, "sidebar": true, "hideRoadControl": true},
+  "treeCount": 2500,
+  "features": {"uniformTrees": false, "avoidBuildingTrees": true, "sidebar": true, "hideRoadControl": true},
   "data": {
     "map": "map.json",
     "places": "places.json",
