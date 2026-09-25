@@ -40,7 +40,7 @@ function hydrate(config, registry, sourcesHtml) {
     const distance = config.route.distanceMeters >= 1000
       ? `${(config.route.distanceMeters / 1000).toFixed(1)} 公里`
       : `${config.route.distanceMeters} 米`;
-    document.querySelector('#toggle-route-text').textContent = `${config.route.durationMinutes} 分路线`;
+    document.querySelector('#toggle-route-text').textContent = `推荐路线（${config.route.durationMinutes}分钟）`;
     routeButton.title = `${config.route.name} · 约 ${distance}`;
     routeButton.setAttribute('aria-label', `${config.route.name}，约 ${distance}`);
   }
@@ -48,19 +48,38 @@ function hydrate(config, registry, sourcesHtml) {
   document.querySelector('#sources-content').innerHTML = sourcesHtml;
 
   const navigation = document.querySelector('#destination-switch');
-  navigation.replaceChildren(...registry.map(item => {
-    const link = document.createElement('a');
-    link.href = `?destination=${encodeURIComponent(item.id)}`;
-    link.textContent = `${item.city} · ${item.name}`;
-    if (item.id === config.slug) link.setAttribute('aria-current', 'page');
-    return link;
-  }));
-  requestAnimationFrame(() => {
-    const current = navigation.querySelector('[aria-current="page"]');
-    if (current && navigation.scrollWidth > navigation.clientWidth) {
-      navigation.scrollLeft = current.offsetLeft - (navigation.clientWidth - current.offsetWidth) / 2;
+  const label = document.createElement('label');
+  label.className = 'destination-caption';
+  label.htmlFor = 'destination-select';
+  label.textContent = '选择景区';
+  const selectWrap = document.createElement('span');
+  selectWrap.className = 'destination-select-wrap';
+  const select = document.createElement('select');
+  select.id = 'destination-select';
+  select.className = 'destination-select';
+  select.setAttribute('aria-label', '按城市选择景区');
+  const grouped = new Map();
+  for (const item of registry) {
+    if (!grouped.has(item.city)) grouped.set(item.city, []);
+    grouped.get(item.city).push(item);
+  }
+  for (const [city, items] of grouped) {
+    const group = document.createElement('optgroup');
+    group.label = city;
+    for (const item of items) {
+      const option = document.createElement('option');
+      option.value = item.id;
+      option.textContent = `${item.city} · ${item.name}`;
+      option.selected = item.id === config.slug;
+      group.append(option);
     }
+    select.append(group);
+  }
+  select.addEventListener('change', () => {
+    location.href = `?destination=${encodeURIComponent(select.value)}`;
   });
+  selectWrap.append(select);
+  navigation.replaceChildren(label, selectWrap);
 }
 
 export async function loadDestination() {

@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { loadDestination } from './destination-loader.js?v=20260925-geo1';
+import { loadDestination } from './destination-loader.js?v=20260925-routes1';
 import { createSummerLandmark, createCoveredCorridors } from './summer-models.js';
 let CONFIG;
 try{
@@ -63,11 +63,23 @@ function pathMesh(points,width,color,yOffset=.08,parent=scene){
  const mesh=makeMesh(geometry,new THREE.MeshStandardMaterial({color,roughness:1,side:THREE.DoubleSide}),parent);mesh.castShadow=false;return mesh;
 }
 
+function addRouteArrow(points,fraction,parent){
+ const lengths=[],total=points.slice(1).reduce((sum,point,index)=>{const segment=Math.hypot(point[0]-points[index][0],point[1]-points[index][1]);lengths.push(segment);return sum+segment;},0),target=total*fraction;
+ let travelled=0;
+ for(let i=1;i<points.length;i++){
+  const segment=lengths[i-1];if(travelled+segment<target){travelled+=segment;continue;}
+  const a=points[i-1],b=points[i],t=segment?THREE.MathUtils.clamp((target-travelled)/segment,0,1):0,dx=(b[0]-a[0])/(segment||1),dz=(b[1]-a[1])/(segment||1),x=THREE.MathUtils.lerp(a[0],b[0],t),z=THREE.MathUtils.lerp(a[1],b[1],t),size=THREE.MathUtils.clamp(Math.max(terrain.width,terrain.depth)*.012,2.5,5),backX=x-dx*size*.72,backZ=z-dz*size*.72,sideX=-dz*size*.62,sideZ=dx*size*.62,y=Math.max(1.7,terrainSurfaceHeight(x,z)+.76);
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute([x+dx*size,y,z+dz*size,backX+sideX,y,backZ+sideZ,backX-sideX,y,backZ-sideZ],3));geometry.computeVertexNormals();
+  const arrow=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:0xe0522c,side:THREE.DoubleSide,depthWrite:false}));arrow.renderOrder=5;parent.add(arrow);break;
+ }
+}
 function createRecommendedRoute(){
  if(!ROUTE?.points?.length)return;
  routeGroup=new THREE.Group();routeGroup.name=ROUTE.name;scene.add(routeGroup);
  pathMesh(ROUTE.points,1.02,0xf4e5c5,.52,routeGroup);
  pathMesh(ROUTE.points,.42,0xb95e3d,.58,routeGroup);
+ const total=ROUTE.points.slice(1).reduce((sum,point,index)=>sum+Math.hypot(point[0]-ROUTE.points[index][0],point[1]-ROUTE.points[index][1]),0),fractions=total>180?[.25,.5,.75]:[.34,.68];
+ fractions.forEach(fraction=>addRouteArrow(ROUTE.points,fraction,routeGroup));
 }
 function wallMesh(points,width,wallHeight,color,baseOffset=0){
  if(points.length<2)return;const vertices=[];
@@ -303,7 +315,7 @@ $('#locate-me').onclick=()=>{if(!ready)return;if(locationWatchId===null)startLoc
 $('#topview').onclick=()=>{if(!ready)return;overview=false;topView=!topView;$('#topview').setAttribute('aria-pressed',String(topView));animateTo(controls.target,topView?new THREE.Vector3(0,Math.max(camera.position.distanceTo(controls.target),250),1):homeOffset.clone().normalize().multiplyScalar(camera.position.distanceTo(controls.target)),1000);};
 $('#toggle-roads').onclick=()=>{if(ready)$('#toggle-roads').setAttribute('aria-pressed',String(transportLayer.toggleRoads()));};
 $('#toggle-metro').onclick=()=>{if(ready)$('#toggle-metro').setAttribute('aria-pressed',String(transportLayer.toggleStations()));};
-$('#toggle-route').onclick=()=>{if(!ready||!routeGroup)return;routeGroup.visible=!routeGroup.visible;$('#toggle-route').setAttribute('aria-pressed',String(routeGroup.visible));const distance=ROUTE.distanceMeters>=1000?`${(ROUTE.distanceMeters/1000).toFixed(1)} 公里`:`${ROUTE.distanceMeters} 米`;$('#status').textContent=routeGroup.visible?`${ROUTE.durationMinutes} 分秋游 · 约 ${distance}`:'秋游路线已隐藏';$('#live').textContent=$('#status').textContent;};
+$('#toggle-route').onclick=()=>{if(!ready||!routeGroup)return;routeGroup.visible=!routeGroup.visible;$('#toggle-route').setAttribute('aria-pressed',String(routeGroup.visible));const distance=ROUTE.distanceMeters>=1000?`${(ROUTE.distanceMeters/1000).toFixed(1)} 公里`:`${ROUTE.distanceMeters} 米`;$('#status').textContent=routeGroup.visible?`推荐路线（${ROUTE.durationMinutes}分钟）· 约 ${distance}`:'推荐路线已隐藏';$('#live').textContent=$('#status').textContent;};
 $('#labels').onclick=()=>{labelsVisible=!labelsVisible;$('#labels').setAttribute('aria-pressed',String(labelsVisible));};
 $('#orbit').onclick=()=>{if(!ready)return;overview=false;cancelFlight();controls.autoRotate=!controls.autoRotate;$('#orbit').setAttribute('aria-pressed',String(controls.autoRotate));};
 $('#compass').onclick=()=>{overview=false;if(ready)animateTo(controls.target,new THREE.Vector3(0,camera.position.y-controls.target.y,Math.hypot(camera.position.x-controls.target.x,camera.position.z-controls.target.z)),800);};

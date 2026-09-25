@@ -41,6 +41,7 @@
     "places": "places.json",
     "photos": "photos.json",
     "transport": "transport.json",
+    "route": "route.json",
     "sources": "sources.html",
     "landTriangles": "land-triangles.json"
   }

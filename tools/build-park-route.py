@@ -131,7 +131,7 @@ def main():
         "distanceMeters": round(route_length_units * 10 / 10) * 10,
         "stops": route_order,
         "points": [[round(x, 4), round(z, 4)] for x, z in route],
-        "note": "沿 OpenStreetMap 公园步道生成；时长包含沿途观景停留，仅作游览示意。",
+        "note": "沿 OpenStreetMap 景区步道生成；时长包含沿途观景停留，仅作游览示意。",
         "retrieved": "2026-09-25",
     }
     (destination / "route.json").write_text(
