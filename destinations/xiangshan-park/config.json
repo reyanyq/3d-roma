@@ -2,6 +2,7 @@
   "id": "xiangshan-park",
   "slug": "xiangshan-park",
   "name": "香山公园",
+  "journey": {"entryId":"east-gate","entryName":"东门","arrivalRadiusMeters":100},
   "pageTitle": "香山公园漫游 · 轻量化 3D 山地样片",
   "description": "基于公开地图数据生成的香山公园轻量化 3D 互动样片，可旋转、缩放并点击景点飞行。",
   "brandTitle": "香山公园漫游",

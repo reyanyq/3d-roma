@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
-import { loadDestination } from './destination-loader.js?v=20260925-photos1';
+import { loadDestination } from './destination-loader.js?v=20260925-journey1';
 import { createSummerLandmark, createCoveredCorridors } from './summer-models.js';
 let CONFIG;
 try{
@@ -12,6 +12,15 @@ try{
  throw error;
 }
 const {geo:GEO,photos:PHOTOS,transport:TRANSPORT,locations,route:ROUTE}=CONFIG;
+const routeStart=ROUTE?.stops?.length?locations.find(location=>location.id===ROUTE.stops[0]):null;
+const journeyConfig=CONFIG.journey||{};
+const journeyLocation=locations.find(location=>location.id===journeyConfig.entryId)||routeStart;
+const journeyEntry=journeyLocation?{
+ name:journeyConfig.entryName||journeyLocation.name,
+ lng:journeyConfig.lng??journeyLocation.lng,
+ lat:journeyConfig.lat??journeyLocation.lat,
+ location:journeyLocation
+}:null;
 const terrain=CONFIG.terrain,halfX=terrain.width/2,halfZ=terrain.depth/2,gridX=terrain.width/terrain.step,gridZ=terrain.depth/terrain.step;
 import { createTransportLayer } from './transport-layer.js';
 import { setLocationPhoto } from './photo-viewer.js';
@@ -25,6 +34,7 @@ const homeTarget=new THREE.Vector3(...CONFIG.home.target), homeOffset=new THREE.
 const fittedHomeOffset=()=>homeOffset.clone().multiplyScalar(Math.max(1,(window.innerWidth<=700?.95:.73)/(viewport.clientWidth/viewport.clientHeight)));
 let initialSize=true, overview=true, transportLayer, selectedStation=null, routeGroup=null, terrainSurfaceHeight=height;
 let locationWatchId=null,locationFollowing=false,locationInside=false,locationHasCentered=false,locationAccuracy=null;
+let journeyArrived=false,journeyStarted=false;
 let userLocationLayer=null,userLocationAccuracy=null,userLocationMarker=null,userLocationPoint=null,userLocationTarget=null;
 const destinationName=()=>selected?locations.find(l=>l.id===selected).name:selectedStation?selectedStation.name+'站':null;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -229,7 +239,42 @@ function updateMarkers(){const width=viewport.clientWidth,height=viewport.client
  $('#compass-needle').style.transform=`rotate(${-THREE.MathUtils.radToDeg(controls.getAzimuthalAngle())}deg)`;
  const d=camera.position.distanceTo(controls.target);$('#altitude').textContent=d<250?'近景视角':'全景视角';
 }
-function locationStatusText(){return locationInside?(locationAccuracy!==null?`已定位 · 精度约 ${Math.round(locationAccuracy)} 米`:'已定位'):locationWatchId!==null?'当前位置在当前沙盘外':null;}
+function distanceMetres(lng1,lat1,lng2,lat2){
+ const toRadians=value=>value*Math.PI/180,dLat=toRadians(lat2-lat1),dLng=toRadians(lng2-lng1),a=Math.sin(dLat/2)**2+Math.cos(toRadians(lat1))*Math.cos(toRadians(lat2))*Math.sin(dLng/2)**2;
+ return 12742000*Math.asin(Math.sqrt(a));
+}
+function outsideChina(lng,lat){return lng<72.004||lng>137.8347||lat<.8293||lat>55.8271;}
+function transformLatitude(lng,lat){let value=-100+2*lng+3*lat+.2*lat*lat+.1*lng*lat+.2*Math.sqrt(Math.abs(lng));value+=(20*Math.sin(6*lng*Math.PI)+20*Math.sin(2*lng*Math.PI))*2/3;value+=(20*Math.sin(lat*Math.PI)+40*Math.sin(lat/3*Math.PI))*2/3;return value+(160*Math.sin(lat/12*Math.PI)+320*Math.sin(lat*Math.PI/30))*2/3;}
+function transformLongitude(lng,lat){let value=300+lng+2*lat+.1*lng*lng+.1*lng*lat+.1*Math.sqrt(Math.abs(lng));value+=(20*Math.sin(6*lng*Math.PI)+20*Math.sin(2*lng*Math.PI))*2/3;value+=(20*Math.sin(lng*Math.PI)+40*Math.sin(lng/3*Math.PI))*2/3;return value+(150*Math.sin(lng/12*Math.PI)+300*Math.sin(lng/30*Math.PI))*2/3;}
+function toAmapCoordinates(lng,lat){
+ if(outsideChina(lng,lat))return[lng,lat];
+ const earthRadius=6378245,eccentricity=.00669342162296594323,dLat=transformLatitude(lng-105,lat-35),dLng=transformLongitude(lng-105,lat-35),radLat=lat/180*Math.PI,magic=1-eccentricity*Math.sin(radLat)**2,sqrtMagic=Math.sqrt(magic);
+ return[lng+dLng*180/(earthRadius/sqrtMagic*Math.cos(radLat)*Math.PI),lat+dLat*180/((earthRadius*(1-eccentricity))/(magic*sqrtMagic)*Math.PI)];
+}
+function amapNavigationUrl(mode){
+ const [lng,lat]=toAmapCoordinates(journeyEntry.lng,journeyEntry.lat),url=new URL('https://uri.amap.com/navigation');
+ url.searchParams.set('from','');url.searchParams.set('to',`${lng.toFixed(6)},${lat.toFixed(6)},${journeyEntry.name}`);url.searchParams.set('mode',mode);url.searchParams.set('policy','0');url.searchParams.set('src','3d-roma');url.searchParams.set('callnative','1');return url.href;
+}
+function updateJourneyUI(){
+ const button=$('#journey-action'),text=$('#journey-action-text');if(!journeyEntry){button.hidden=true;return;}
+ const state=journeyStarted?'active':journeyArrived?'arrived':'planning';button.dataset.state=state;text.textContent=journeyStarted?'查看路线':journeyArrived?'开始路线':`去${journeyEntry.name}`;
+ button.setAttribute('aria-label',journeyStarted?'查看推荐路线':journeyArrived?`已到达${journeyEntry.name}，开始推荐路线`:`导航到${journeyEntry.name}`);
+ $('#journey-title').textContent=`前往${journeyEntry.name}`;$('#journey-copy').textContent=`选择交通方式，将打开高德地图导航到${journeyEntry.name}。`;$('#journey-arrived').textContent=`我已到达${journeyEntry.name}`;
+ document.querySelectorAll('[data-journey-mode]').forEach(link=>link.href=amapNavigationUrl(link.dataset.journeyMode));
+}
+function focusJourneyEntry(){
+ if(!ready||!journeyEntry)return;
+ pauseLocationFollow();selected=journeyEntry.location?.id||null;selectedStation=null;transportLayer?.select(null);overview=false;topView=false;$('#topview').setAttribute('aria-pressed','false');$('#detail').hidden=true;updateFraming();
+ document.querySelectorAll('[data-id]').forEach(element=>{const active=element.dataset.id===selected;element.classList.toggle('active',active);if(element.classList.contains('place'))element.setAttribute('aria-pressed',String(active));});
+ const point=pos(journeyEntry.lng,journeyEntry.lat),ground=terrainSurfaceHeight(point.x,point.z),target=new THREE.Vector3(point.x,ground+metres(3),point.z),distance=Math.max(42,Math.min(86,Math.max(terrain.width,terrain.depth)*.13));
+ animateTo(target,new THREE.Vector3(distance*.44,distance*.62,distance),1000);$('#sidebar').classList.remove('mobile-open');$('#open-places').setAttribute('aria-expanded','false');
+}
+function markJourneyArrived(focus=true){journeyArrived=true;updateJourneyUI();if(focus)focusJourneyEntry();const message=`已到达 · ${journeyEntry.name}`;$('#status').textContent=message;$('#live').textContent=`已到达${journeyEntry.name}，可以开始推荐路线`;}
+function startJourney(){
+ journeyArrived=true;journeyStarted=true;updateJourneyUI();if(routeGroup){routeGroup.visible=true;$('#toggle-route').setAttribute('aria-pressed','true');}focusJourneyEntry();
+ const message='路线已开始 · 请沿红色箭头前进';$('#status').textContent=message;$('#live').textContent=message;if(locationWatchId===null)startLocationTracking();else{locationFollowing=true;locationHasCentered=false;updateLocationButton('following');focusUserLocation();}
+}
+function locationStatusText(){if(journeyArrived&&!journeyStarted)return`已到达 · ${journeyEntry.name}`;return locationInside?(locationAccuracy!==null?`已定位 · 精度约 ${Math.round(locationAccuracy)} 米`:'已定位'):locationWatchId!==null?'当前位置在当前沙盘外':null;}
 function updateLocationButton(state){
  const button=$('#locate-me'),active=state!=='inactive';button.setAttribute('aria-pressed',String(active));
  const label=state==='following'?'关闭实时定位':state==='paused'?'重新跟随我的位置':'开启实时定位';button.title=label;button.setAttribute('aria-label',label);
@@ -248,6 +293,7 @@ function updateUserLocation(position){
  const ground=terrainSurfaceHeight(p.x,p.z),nextTarget=new THREE.Vector3(p.x,ground+metres(2),p.z),previousTarget=userLocationTarget?.clone();
  userLocationPoint=new THREE.Vector3(p.x,ground+metres(5),p.z);userLocationTarget=nextTarget;userLocationMarker.loc.point.copy(userLocationPoint);
  userLocationLayer.position.set(p.x,ground+.18,p.z);userLocationLayer.visible=true;userLocationAccuracy.scale.setScalar(metres(Math.min(300,Math.max(accuracy||8,8))));
+ if(!journeyArrived&&journeyEntry&&(accuracy||0)<150&&distanceMetres(longitude,latitude,journeyEntry.lng,journeyEntry.lat)<(journeyConfig.arrivalRadiusMeters||90))markJourneyArrived(false);
  const message=locationStatusText();$('#status').textContent=message;$('#live').textContent=message;userLocationMarker.el.setAttribute('aria-label',`${message}，我的位置`);
  if(locationFollowing&&!locationHasCentered)focusUserLocation();
  else if(locationFollowing&&previousTarget){const delta=nextTarget.clone().sub(previousTarget);if(flight){flight.target.add(delta);flight.to.add(delta);}else{camera.position.add(delta);controls.target.add(delta);}}
@@ -316,6 +362,11 @@ $('#topview').onclick=()=>{if(!ready)return;overview=false;topView=!topView;$('#
 $('#toggle-roads').onclick=()=>{if(ready)$('#toggle-roads').setAttribute('aria-pressed',String(transportLayer.toggleRoads()));};
 $('#toggle-metro').onclick=()=>{if(ready)$('#toggle-metro').setAttribute('aria-pressed',String(transportLayer.toggleStations()));};
 $('#toggle-route').onclick=()=>{if(!ready||!routeGroup)return;routeGroup.visible=!routeGroup.visible;$('#toggle-route').setAttribute('aria-pressed',String(routeGroup.visible));const distance=ROUTE.distanceMeters>=1000?`${(ROUTE.distanceMeters/1000).toFixed(1)} 公里`:`${ROUTE.distanceMeters} 米`;$('#status').textContent=routeGroup.visible?`推荐路线（${ROUTE.durationMinutes}分钟）· 约 ${distance}`:'推荐路线已隐藏';$('#live').textContent=$('#status').textContent;};
+$('#journey-action').onclick=()=>{if(journeyStarted){if(ready){resetView();routeGroup.visible=true;$('#toggle-route').setAttribute('aria-pressed','true');}return;}if(journeyArrived){startJourney();return;}$('#journey-panel').showModal();};
+$('#close-journey').onclick=()=>$('#journey-panel').close();
+$('#journey-arrived').onclick=()=>{$('#journey-panel').close();markJourneyArrived();};
+$('#journey-panel').addEventListener('click',event=>{if(event.target===$('#journey-panel'))$('#journey-panel').close();});
+document.querySelectorAll('[data-journey-mode]').forEach(link=>link.addEventListener('click',()=>{const label=link.textContent;$('#journey-panel').close();const message=`已打开高德${label}导航 · ${journeyEntry.name}`;$('#status').textContent=message;$('#live').textContent=message;}));
 $('#labels').onclick=()=>{labelsVisible=!labelsVisible;$('#labels').setAttribute('aria-pressed',String(labelsVisible));};
 $('#orbit').onclick=()=>{if(!ready)return;overview=false;cancelFlight();controls.autoRotate=!controls.autoRotate;$('#orbit').setAttribute('aria-pressed',String(controls.autoRotate));};
 $('#compass').onclick=()=>{overview=false;if(ready)animateTo(controls.target,new THREE.Vector3(0,camera.position.y-controls.target.y,Math.hypot(camera.position.x-controls.target.x,camera.position.z-controls.target.z)),800);};
@@ -325,5 +376,6 @@ $('#sources-button').onclick=()=>$('#sources').showModal();$('#close-sources').o
 window.addEventListener('resize',resize);
 window.addEventListener('pagehide',()=>stopLocationTracking(false));
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.querySelector('dialog[open]'))return;cancelFlight();$('#detail').hidden=true;updateFraming();$('#sidebar').classList.remove('mobile-open');}if(e.target===renderer?.domElement){if(e.key==='Home'){e.preventDefault();resetView();}if(e.key==='+'||e.key==='=')$('#zoom-in').click();if(e.key==='-')$('#zoom-out').click();}});
+updateJourneyUI();
 setTimeout(init,70);
-window.travelMap={flyTo,resetView,getState:()=>({ready,selected,flying:!!flight,camera:camera?.position.toArray(),target:controls?.target.toArray(),locations:locations.map(l=>({id:l.id,lng:l.lng,lat:l.lat})),geolocation:{active:locationWatchId!==null,following:locationFollowing,inside:locationInside,accuracy:locationAccuracy,point:userLocationPoint?.toArray()||null},drawCalls:renderer?.info.render.calls})};
+window.travelMap={flyTo,resetView,getState:()=>({ready,selected,flying:!!flight,camera:camera?.position.toArray(),target:controls?.target.toArray(),locations:locations.map(l=>({id:l.id,lng:l.lng,lat:l.lat})),journey:{entry:journeyEntry?{name:journeyEntry.name,lng:journeyEntry.lng,lat:journeyEntry.lat}:null,arrived:journeyArrived,started:journeyStarted},geolocation:{active:locationWatchId!==null,following:locationFollowing,inside:locationInside,accuracy:locationAccuracy,point:userLocationPoint?.toArray()||null},drawCalls:renderer?.info.render.calls})};

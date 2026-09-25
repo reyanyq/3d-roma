@@ -2,6 +2,7 @@
   "id": "haidian-park",
   "slug": "haidian-park",
   "name": "海淀公园",
+  "journey": {"entryId":"flower-valley","entryName":"东门","arrivalRadiusMeters":100},
   "pageTitle": "海淀公园漫游 · 轻量化 3D 样片",
   "description": "基于公开地图数据生成的海淀公园轻量化 3D 互动样片，可旋转、缩放并点击景点飞行。",
   "brandTitle": "海淀公园漫游",

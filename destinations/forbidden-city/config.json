@@ -2,6 +2,7 @@
   "id": "forbidden-city",
   "slug": "forbidden-city",
   "name": "故宫",
+  "journey": {"entryId":"wumen","entryName":"午门","arrivalRadiusMeters":100},
   "pageTitle": "故宫漫游 · 3D 旅行地图",
   "description": "可旋转、缩放并点击景点飞行的故宫 3D 互动旅游地图。",
   "brandTitle": "故宫漫游",

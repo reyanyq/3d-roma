@@ -2,6 +2,7 @@
   "id": "westlake",
   "slug": "west-lake",
   "name": "西湖",
+  "journey": {"entryId":"broken","entryName":"断桥入口","arrivalRadiusMeters":120},
   "pageTitle": "西湖漫游 · 3D 旅行地图",
   "brandTitle": "西湖漫游",
   "brandEnglish": "WEST LAKE · HANGZHOU",

@@ -2,6 +2,7 @@
   "id": "olympic-forest-south",
   "slug": "olympic-forest-south",
   "name": "奥森南园",
+  "journey": {"entryId":"south-gate","entryName":"南园南门","arrivalRadiusMeters":120},
   "pageTitle": "奥森南园漫游 · 轻量化 3D 骨架",
   "description": "基于公开地图数据生成的奥林匹克森林公园南园轻量化 3D 骨架样片。",
   "brandTitle": "奥森南园漫游",

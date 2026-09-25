@@ -2,6 +2,7 @@
   "id": "summer-palace",
   "slug": "summer-palace",
   "name": "颐和园",
+  "journey": {"entryId":"renshou","entryName":"东宫门","lng":116.2775,"lat":39.9969,"arrivalRadiusMeters":120},
   "pageTitle": "颐和园漫游 · 3D 旅行地图",
   "description": "可旋转、缩放并点击景点飞行的颐和园 3D 互动旅游地图。",
   "brandTitle": "颐和园漫游",

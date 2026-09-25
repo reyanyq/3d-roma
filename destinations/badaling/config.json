@@ -2,6 +2,7 @@
   "id": "badaling",
   "slug": "badaling",
   "name": "八达岭长城",
+  "journey": {"entryId":"guanmen","entryName":"关城入口","arrivalRadiusMeters":100},
   "pageTitle": "八达岭长城漫游 · 3D 旅行地图",
   "description": "可旋转、缩放并点击敌楼飞行的八达岭长城 3D 互动旅游地图。",
   "brandTitle": "八达岭漫游",
