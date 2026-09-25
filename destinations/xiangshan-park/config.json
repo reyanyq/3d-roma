@@ -12,8 +12,8 @@
     "caption": "红叶入山，古园登高",
     "captionEnglish": "AUTUMN TRAILS · FRAGRANT HILLS",
     "footer": "选一处景点，即刻漫游",
-    "image": "public/images/xiangshan-park/hero.svg",
-    "imageAlt": "香山秋季山林与登山步道插画"
+    "image": "public/images/xiangshan-park/east-gate.jpg",
+    "imageAlt": "香山公园东门与远处香山主峰实景"
   },
   "kicker": {
     "eyebrow": "FRAGRANT HILLS EXPLORER",
@@ -48,6 +48,7 @@
     "places": "places.json",
     "photos": "photos.json",
     "transport": "transport.json",
+    "route": "route.json",
     "sources": "sources.html"
   }
 }
